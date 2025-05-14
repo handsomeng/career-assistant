@@ -1,0 +1,15 @@
+[Unit]
+Description=职业规划小助手 Web Application
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/career-assistant
+ExecStart=/home/ubuntu/.local/bin/python app.py
+Restart=always
+RestartSec=5
+Environment="PATH=/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="PYTHONUNBUFFERED=1"
+
+[Install]
+WantedBy=multi-user.target 

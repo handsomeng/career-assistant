@@ -19,17 +19,106 @@
 ## 如何使用
 
 1. 克隆仓库
-2. 安装依赖：`pip install -r requirements.txt`
-3. 启动服务器：`python app.py`
+   ```bash
+   git clone https://github.com/handsomeng/career-assistant.git
+   cd career-assistant
+   ```
+
+2. 安装依赖
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. 启动服务器
+   ```bash
+   python app.py
+   ```
+
 4. 访问 `http://localhost:5000`
 
+## Git版本管理流程
 
+我们使用Git进行版本管理，以下是推荐的工作流程：
 
-## 版本管理
+1. **克隆仓库**
+   ```bash
+   git clone https://github.com/handsomeng/career-assistant.git
+   ```
 
-使用Git和GitHub进行版本管理，方便团队协作和代码部署。
+2. **创建功能分支**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+3. **提交更改**
+   ```bash
+   git add .
+   git commit -m "描述你的更改"
+   ```
+
+4. **推送到远程仓库**
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+5. **创建合并请求**
+   在GitHub上创建Pull Request，将你的功能分支合并到main分支
+
+6. **版本标签**
+   发布新版本时，使用标签标记
+   ```bash
+   git tag -a v1.0.0 -m "版本1.0.0发布"
+   git push origin v1.0.0
+   ```
+
+## 服务器部署
+
+### 初次部署
+
+1. 在服务器上安装Git和Python
+   ```bash
+   sudo apt update
+   sudo apt install git python3 python3-pip
+   ```
+
+2. 克隆仓库
+   ```bash
+   git clone https://github.com/handsomeng/career-assistant.git
+   cd career-assistant
+   pip install -r requirements.txt
+   ```
+
+3. 设置系统服务
+   ```bash
+   # 复制服务文件到systemd目录
+   sudo cp career-assistant.service /etc/systemd/system/
+   
+   # 启用并启动服务
+   sudo systemctl daemon-reload
+   sudo systemctl enable career-assistant.service
+   sudo systemctl start career-assistant.service
+   ```
+
+### 自动化部署
+
+使用部署脚本进行更新：
+
+1. 确保deploy.sh具有执行权限
+   ```bash
+   chmod +x deploy.sh
+   ```
+
+2. 运行部署脚本
+   ```bash
+   ./deploy.sh
+   ```
 
 ## 版本历史
 
 - v1.0.0 - 初始版本
 - v1.0.1 - 添加部署脚本和GitHub工作流
+- v1.1.0 - 添加项目主页和系统服务配置
+
+## 贡献
+
+欢迎提交Pull Request或Issue来改进这个项目。
