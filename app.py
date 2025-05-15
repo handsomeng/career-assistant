@@ -518,4 +518,4 @@ if __name__ == '__main__':
     # 确保在 /www/wwwroot/wm/ 目录下运行此脚本
     # 或者用绝对路径指定日志文件位置
     # logging.basicConfig(filename='app.log', level=logging.DEBUG) # 可以取消注释来记录日志到文件
-    app.run(host='0.0.0.0', port=5000) 
+    app.run(host='0.0.0.0', port=8000) 
