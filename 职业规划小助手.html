@@ -7,16 +7,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0066CC; /* 苹果蓝 */
-            --secondary-color: #5E5CE6; /* 苹果紫色 */
-            --accent-color: #FF9500; /* 苹果橙色 */
-            --success-color: #34C759; /* 苹果绿 */
-            --warning-color: #FF3B30; /* 苹果红 */
-            --background-start-color: #F9FAFC; /* 浅灰背景 */
-            --background-end-color: #FFFFFF; /* 白色背景 */
+            --primary-color: #0066CC;
+            --secondary-color: #5E5CE6;
+            --accent-color: #FF9500;
+            --success-color: #34C759;
+            --warning-color: #FF3B30;
+            --background-start-color: #F9FAFC;
+            --background-end-color: #FFFFFF;
             --card-background: #FFFFFF;
-            --text-color: #1D1D1F; /* 苹果暗色文本 */
-            --light-text-color: #86868B; /* 苹果浅色文本 */
+            --text-color: #1D1D1F;
+            --light-text-color: #86868B;
             --border-color: #E5E5EA;
             --shadow-color: rgba(0, 0, 0, 0.05);
             --hover-primary-color: #0055BA;
@@ -31,62 +31,38 @@
             --gradient-pink-orange: linear-gradient(135deg, #EC4899 0%, #F97316 100%);
             --gradient-yellow-orange: linear-gradient(135deg, #FBBF24 0%, #F97316 100%);
             --gradient-gray-blue: linear-gradient(135deg, #94A3B8 0%, #475569 100%);
+            --very-light-gray: #f8f9fa;
+        }
+
+        html { /* Explicitly reset html element's margin and padding */
+            margin: 0;
+            padding: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             font-family: var(--font-family);
-            line-height: 1.5;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: linear-gradient(135deg, #f6f9fc, #eef1f5);
+            overflow-x: hidden;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #f6f9fc, #eef1f5);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
             min-height: 100vh;
-            padding-top: 30px;
-            padding-bottom: 30px;
-            box-sizing: border-box;
         }
 
         .container {
-            width: 100%;
-            max-width: 780px;
-            margin: auto;
-            padding: 30px;
-            background: var(--card-background);
-            border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            position: relative;
-            overflow: hidden;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
         
-        /* 添加背景装饰 */
-        .container::before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(251, 113, 133, 0.08));
-            z-index: 0;
-        }
-        
-        .container::after {
-            content: '';
-            position: absolute;
-            bottom: -80px;
-            left: -80px;
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.06), rgba(20, 184, 166, 0.06));
-            z-index: 0;
-        }
-
-        h1 {
+        #app-content-wrapper h1 {
             font-size: 2.4em;
             font-weight: 700;
             color: var(--text-color);
@@ -101,7 +77,7 @@
             z-index: 1;
         }
         
-        .subtitle {
+        #app-content-wrapper .subtitle {
             text-align: center;
             font-size: 1.1em;
             color: var(--light-text-color);
@@ -111,7 +87,7 @@
             z-index: 1;
         }
 
-        h2 {
+        #app-content-wrapper h2 {
             font-size: 1.6em;
             font-weight: 600;
             color: var(--text-color);
@@ -126,18 +102,422 @@
         
         .page-module {
             margin-bottom: 35px;
-            padding: 30px;
-            background-color: var(--card-background);
-            border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            padding: 35px 40px;
+            background-color: var(--card-background); 
+            border-radius: 20px; 
+            box-shadow: 0 8px 30px rgba(0,0,0,0.07);
             position: relative;
             z-index: 1;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            max-width: 1000px;
+            margin-left: auto; 
+            margin-right: auto; 
         }
         
         .page-module:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            box-shadow: 0 10px 35px rgba(0,0,0,0.1);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%; /* Make it take full width of parent .navbar */
+            padding: 0 20px; /* Apply horizontal padding directly */
+            box-sizing: border-box; /* Ensure padding is included in width */
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-blue-purple);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--gradient-blue-purple);
+            color: white !important;
+            border-radius: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+        }
+
+        .hero {
+            padding: 150px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(251, 113, 133, 0.08));
+            border-radius: 50%;
+            top: -300px;
+            right: -200px;
+            z-index: -1;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.08), rgba(20, 184, 166, 0.08));
+            border-radius: 50%;
+            bottom: -200px;
+            left: -100px;
+            z-index: -1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            font-weight: 700;
+            letter-spacing: -1px;
+            color: var(--text-color);
+            background: none;
+            -webkit-background-clip: unset;
+            -webkit-text-fill-color: unset;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            color: var(--light-text-color);
+        }
+
+        .hero span {
+            background: var(--gradient-blue-purple);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .cta-big-button {
+            display: inline-block;
+            padding: 16px 40px;
+            background: var(--gradient-blue-purple);
+            color: white !important;
+            font-size: 1.2rem;
+            border-radius: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            cursor: pointer;
+        }
+
+        .cta-big-button:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .features {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--light-text-color);
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-purple-pink);
+        }
+
+        .feature-card:nth-child(2)::before {
+            background: var(--gradient-blue-teal);
+        }
+
+        .feature-card:nth-child(3)::before {
+            background: var(--gradient-orange-red);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .feature-card:nth-child(1) .feature-icon {
+            background: var(--gradient-purple-pink);
+        }
+
+        .feature-card:nth-child(2) .feature-icon {
+            background: var(--gradient-blue-teal);
+        }
+
+        .feature-card:nth-child(3) .feature-icon {
+            background: var(--gradient-orange-red);
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .feature-card p {
+            color: var(--light-text-color);
+            line-height: 1.7;
+        }
+
+        .process {
+            padding: 100px 0;
+            background: #f8fafc;
+        }
+
+        .process-steps {
+            display: flex;
+            flex-direction: column;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .process-step {
+            display: flex;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .process-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            margin-right: 25px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .process-step:nth-child(1) .step-number {
+            background: var(--gradient-purple-pink);
+        }
+
+        .process-step:nth-child(2) .step-number {
+            background: var(--gradient-blue-purple);
+        }
+
+        .process-step:nth-child(3) .step-number {
+            background: var(--gradient-green-blue);
+        }
+
+        .process-step:nth-child(4) .step-number {
+            background: var(--gradient-orange-red);
+        }
+
+        .step-content h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .step-content p {
+            color: var(--light-text-color);
+        }
+
+        .process-step::before {
+            content: '';
+            position: absolute;
+            left: 25px;
+            top: 50px;
+            width: 2px;
+            height: calc(100% + 30px);
+            background: #e5e7eb;
+            z-index: 1;
+        }
+
+        .process-step:last-child::before {
+            display: none;
+        }
+
+        .testimonials {
+            padding: 100px 0;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            color: var(--text-color);
+        }
+
+        .testimonial-text::before {
+            content: '"';
+            font-size: 5rem;
+            position: absolute;
+            top: -30px;
+            left: -10px;
+            color: rgba(99, 102, 241, 0.1);
+            z-index: -1;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #f4f4f4;
+            margin-right: 15px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #6366F1;
+        }
+
+        .author-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+
+        .author-info p {
+            color: var(--light-text-color);
+            font-size: 0.9rem;
+        }
+
+        .cta {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(135deg, #f6f9fc, #eef1f5);
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        .cta p {
+            font-size: 1.1rem;
+            color: var(--light-text-color);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .footer {
+            background: white;
+            padding: 50px 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer p {
+            color: var(--light-text-color);
         }
 
         .input-group {
@@ -172,7 +552,6 @@
             outline: none;
         }
 
-        /* Holland Questions Styling */
         .question-content p {
             font-weight: 500;
             font-size: 1.1em;
@@ -264,7 +643,7 @@
             transform: none;
         }
         
-        .button-container {
+        .button-container { 
             text-align: center;
             margin-top: 30px;
         }
@@ -273,12 +652,10 @@
              margin-bottom: 28px;
         }
 
-        /* 解读分析区域 - 修改为纵向排列 */
         .insight-section {
             margin-bottom: 30px;
         }
 
-        /* 纵向排列的解读卡片 */
         .insight-card {
             background: white;
             border-radius: 16px;
@@ -291,7 +668,6 @@
             overflow: hidden;
         }
         
-        /* 为每个卡片添加不同的渐变边框 */
         .insight-card:nth-child(1) {
             border-left: 4px solid transparent;
             background-image: linear-gradient(white, white), var(--gradient-purple-pink);
@@ -345,7 +721,6 @@
             font-size: 1.2em;
         }
         
-        /* 为每个图标添加不同的渐变背景 */
         #mbti-insight .insight-icon {
             background: var(--gradient-purple-pink);
             box-shadow: 0 3px 10px rgba(99, 102, 241, 0.2);
@@ -364,7 +739,6 @@
             color: white;
         }
 
-        /* 职业推荐卡片样式 */
         .career-recommendation {
             border: 1px solid var(--border-color);
             border-radius: 16px;
@@ -377,7 +751,6 @@
             overflow: hidden;
         }
         
-        /* 为职业卡片添加渐变边框 */
         .career-recommendation {
             border-left: 5px solid transparent;
             background-image: linear-gradient(white, white), var(--gradient-blue-purple);
@@ -425,7 +798,6 @@
             border-top: 1px solid #EFF1F5;
         }
 
-        /* Detailed Info Cards */
         .detail-card {
             background: white;
             border-radius: 16px;
@@ -455,26 +827,11 @@
             align-items: center;
         }
         
-        /* 为每个详情卡片的标题添加不同颜色 */
-        .detail-card:nth-child(1) h4 {
-            color: #8B5CF6;
-        }
-        
-        .detail-card:nth-child(2) h4 {
-            color: #3B82F6;
-        }
-        
-        .detail-card:nth-child(3) h4 {
-            color: #10B981;
-        }
-        
-        .detail-card:nth-child(4) h4 {
-            color: #F59E0B;
-        }
-        
-        .detail-card:nth-child(5) h4 {
-            color: #EC4899;
-        }
+        .detail-card:nth-child(1) h4 { color: #8B5CF6; }
+        .detail-card:nth-child(2) h4 { color: #3B82F6; }
+        .detail-card:nth-child(3) h4 { color: #10B981; }
+        .detail-card:nth-child(4) h4 { color: #F59E0B; }
+        .detail-card:nth-child(5) h4 { color: #EC4899; }
         
         .detail-card p, .detail-card ul {
             font-size: 0.95em;
@@ -495,42 +852,29 @@
             display: none !important;
         }
         
-        /* 重新设计节点式进度条 - 修复对齐问题 */
         .progress-container {
             width: 100%;
-            margin-bottom: 40px;
+            max-width: 800px; 
+            margin: 30px auto 50px auto; 
             position: relative;
             z-index: 1;
-            padding-top: 15px;
-        }
-        
-        /* 流式内容显示相关的样式 */
-        .cursor-blink {
-            display: none;
-        }
-        
-        .streaming-placeholder {
-            display: none;
-        }
-        
-        /* 恢复加载动画显示 */
-        #loading-animation {
-            /* 不需要额外设置，使用.hidden类来控制显示/隐藏 */
         }
 
         .progress-track {
+            position: absolute; 
             width: 100%;
-            height: 4px;
+            height: 6px; 
             background-color: #E5E5EA;
-            border-radius: 4px;
-            position: relative;
-            margin: 25px 0 35px;
+            border-radius: 3px; 
+            left: 0;
+            top: 17px; 
+            z-index: 1; 
         }
         
-        .progress-bar {
+        .progress-bar { 
             height: 100%;
             background: var(--gradient-blue-purple);
-            border-radius: 4px;
+            border-radius: 3px; 
             transition: width 0.6s ease;
             width: 0%;
         }
@@ -538,18 +882,16 @@
         .progress-steps {
             display: flex;
             justify-content: space-between;
-            position: absolute;
-            top: 15px;
             width: 100%;
-            left: 0;
+            position: relative; 
+            z-index: 2; 
         }
         
         .progress-step {
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
-            z-index: 2;
+            position: relative; 
         }
         
         .step-icon {
@@ -561,23 +903,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px; 
             transition: all 0.3s ease;
             font-size: 18px;
             color: #94A3B8;
-            position: relative;
-            top: -20px; /* 上移使节点位于线上 */
         }
         
         .step-label {
-            font-size: 12px;
+            font-size: 13px; 
             color: #94A3B8;
             font-weight: 500;
             transition: all 0.3s ease;
             text-align: center;
-            max-width: 80px;
-            position: relative;
-            top: -10px; /* 使标签与调整后的节点对齐 */
+            max-width: 90px; 
+            line-height: 1.3;
         }
         
         .progress-step.active .step-icon {
@@ -602,7 +941,6 @@
             color: #0EA5E9;
         }
 
-        /* 加载动画 */
         .loading-container {
             text-align: center;
             padding: 40px 30px;
@@ -620,6 +958,7 @@
             -webkit-backdrop-filter: blur(10px);
             animation: fadeInScale 0.3s ease forwards;
             border: 1px solid rgba(225, 230, 240, 0.7);
+            opacity:0;
         }
         
         @keyframes fadeInScale {
@@ -718,45 +1057,268 @@
             to { transform: rotate(360deg); }
         }
         
-        /* 自适应样式 */
         @media (max-width: 768px) {
-            .container {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            .process-step {
+                flex-direction: column;
+            }
+            .step-number {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            .process-step::before {
+                left: 25px;
+                height: calc(100% + 15px);
+                top: 50px;
+            }
+
+            .page-module { 
                 padding: 25px 20px;
-                border-radius: 20px;
+                margin-left: 15px; 
+                margin-right: 15px;
+                max-width: calc(100% - 30px); 
             }
-            
-            .page-module {
-                padding: 20px;
-            }
-            
-            h1 {
+            #app-content-wrapper h1 {
                 font-size: 2em;
             }
-            
-            .progress-steps {
-                margin-top: -38px;
+            .progress-container {
+                max-width: calc(100% - 30px);
+                margin: 20px auto 40px auto; 
+                padding-left: 10px; 
+                padding-right: 10px;
+                box-sizing: border-box;
             }
-            
+            .progress-track {
+                height: 4px; 
+                border-radius: 2px;
+                top: 14px; 
+            }
+            .progress-bar {
+                border-radius: 2px; 
+            }
             .step-icon {
                 width: 32px;
                 height: 32px;
                 font-size: 14px;
+                margin-bottom: 6px; 
             }
-            
             .step-label {
-                font-size: 10px;
-                max-width: 70px;
+                font-size: 10px; 
+                max-width: 60px; 
+                line-height: 1.2;
             }
+        }
+
+        /* Added for new detail card structures */
+        .detail-card .sub-module {
+            margin-top: 20px; /* Increased margin for better separation */
+            padding-top: 15px; /* Increased padding */
+            border-top: 1px solid #EEF0F2; /* Slightly softer border color */
+        }
+        /* If a card only has sub-modules, the first one shouldn't have top margin/padding if no other content preceded it */
+        .detail-card > .sub-module:first-child {
+             margin-top: 0;
+             padding-top: 0;
+             border-top: none;
+        }
+
+        .detail-card .sub-module h5 {
+            font-size: 1.1em; /* Slightly larger sub-heading */
+            color: var(--primary-color); 
+            margin-bottom: 10px; /* Increased margin */
+            font-weight: 600; /* Bolder */
+        }
+        .workflow-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .workflow-table th, .workflow-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 0.9em;
+            line-height: 1.5; /* Added for better readability in cells */
+        }
+        .workflow-table th {
+            background-color: var(--very-light-gray); /* Using defined variable */
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        .workflow-table td:first-child { /* Time column */
+            width: 25%; /* Adjusted width */
+            font-weight: 500;
+            color: var(--secondary-color); /* Using defined variable */
+            white-space: nowrap; /* Prevent time from wrapping */
+        }
+        /* Styling for development plan stages */
+        #development-plan-content h5 {
+            font-size: 1.1em;
+            color: var(--primary-color);
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        #development-plan-content h5:first-child {
+            margin-top: 0;
+        }
+        #development-plan-content p {
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">AI职业规划助手</div>
+            <button type="button" id="start-assistant-button-nav" class="cta-button">开始规划</button>
+        </div>
+    </nav>
+
+    <div id="new-landing-page-content">
+        <section class="hero">
+            <div class="container">
+                <h1>探索适合你的<span>职业新可能</span></h1>
+                <p>基于AI深度分析，结合MBTI性格、霍兰德兴趣测评和个人简历，为你定制专属职业发展路径</p>
+                <button type="button" id="start-assistant-button-hero" class="cta-big-button">立即开始测评</button>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">全方位的职业分析</h2>
+                <p class="section-subtitle">我们从多个维度分析你的职业潜能，为你推荐最匹配的发展方向</p>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">👤</div>
+                        <h3>MBTI性格分析</h3>
+                        <p>通过权威的MBTI性格测试，了解你的思维方式、决策偏好和社交取向，匹配适合你性格特质的职业领域。</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🧩</div>
+                        <h3>霍兰德兴趣测评</h3>
+                        <p>基于霍兰德六边形理论，深入分析你的职业兴趣类型，让你找到真正热爱且能持续投入的工作方向。</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">📄</div>
+                        <h3>简历能力识别</h3>
+                        <p>AI技术自动分析你的简历，提取关键技能和经验优势，找出职场竞争力和潜在发展空间。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="process">
+            <div class="container">
+                <h2 class="section-title">简单四步，规划未来</h2>
+                <p class="section-subtitle">科学、高效的职业规划流程，只需几分钟即可获得专业分析</p>
+                
+                <div class="process-steps">
+                    <div class="process-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>输入基本信息</h3>
+                            <p>提供MBTI性格类型、所在城市和上传个人简历，帮助我们初步了解你的背景。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>完成兴趣测评</h3>
+                            <p>通过精心设计的霍兰德职业兴趣问卷，深入了解你的职业倾向和价值观。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>AI深度分析</h3>
+                            <p>我们的AI系统整合多维度数据，分析你的优势、特质与各职业的匹配度。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h3>获取职业洞察</h3>
+                            <p>查看个性化报告，包含最匹配职业推荐、发展路径和具体建议。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials">
+            <div class="container">
+                <h2 class="section-title">他们已找到职业方向</h2>
+                <p class="section-subtitle">来自不同领域用户的真实感受</p>
+                
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"之前对自己的职业方向非常迷茫，测评结果显示我适合创意领域。现在我是一名UI设计师，每天的工作都充满激情！"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">L</div>
+                            <div class="author-info">
+                                <h4>李明</h4>
+                                <p>UI设计师 | ENFP</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"作为职场新人，我不确定自己的优势在哪里。AI分析帮我识别了数据分析能力，现在我在科技公司担任数据分析师。"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">Z</div>
+                            <div class="author-info">
+                                <h4>张晓华</h4>
+                                <p>数据分析师 | INTJ</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"30岁想转行却不知从何开始。通过测评发现我有较强的人际沟通能力，现已成功转型为HR经理，找到了新的职业满足感。"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">W</div>
+                            <div class="author-info">
+                                <h4>王梦</h4>
+                                <p>HR经理 | ESFJ</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="container">
+                <h2>开启你的职业新篇章</h2>
+                <p>不再迷茫，找到真正适合你的职业方向</p>
+                <button type="button" id="start-assistant-button-cta" class="cta-big-button">立即开始测评</button>
+            </div>
+        </section>
+
+        <footer class="footer">
+        <div class="container">
+                <p>© 2024 AI职业规划助手 - 用AI技术探索职业可能性</p>
+        </div>
+        </footer>
+    </div> <!-- Closes new-landing-page-content -->
+
+    <div id="app-content-wrapper" class="hidden">
         <h1>职业规划助手</h1>
         <p class="subtitle">通过AI深度分析，为你量身定制职业发展方向</p>
 
-        <!-- 节点式进度条 -->
-        <div class="progress-container">
+        <div class="progress-container" id="progressContainer">
             <div class="progress-track">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
@@ -811,7 +1373,6 @@
             </div>
 
             <div id="holland-questions-area">
-                <!-- Questions will be dynamically shown here -->
                 <div class="holland-question-container question-content" id="question-container-1">
                     <p>问题 1: 我更喜欢...</p>
                     <label><input type="radio" name="q1" value="R"> A. 从事需要动手能力、工具或机械操作的活动。</label>
@@ -915,41 +1476,32 @@
             <h2>AI 职业分析与推荐</h2>
             
             <div class="insight-section">
-                <!-- 修改为纵向排列的三个解读卡片 -->
                 <div class="insight-card" id="mbti-insight">
                     <h3><div class="insight-icon">👤</div>MBTI 人格解读</h3>
                     <p>加载中...</p>
                 </div>
                 
                 <div class="insight-card" id="holland-insight">
-                    <h3><div class="insight-icon">🧩</div>霍兰德兴趣解读</h3>
-                    <p>加载中...</p>
-                </div>
-                
-                <div class="insight-card" id="resume-insight">
-                    <h3><div class="insight-icon">📄</div>简历能力解读</h3>
+                    <h3><div class="insight-icon">🧩</div>霍兰德兴趣解读 (问卷分析)</h3>
                     <p>加载中...</p>
                 </div>
             </div>
             
             <h3 style="margin-top: 30px; margin-bottom: 20px; color: var(--text-color);">最匹配职业推荐 (Top 5)</h3>
             <div id="career-recommendations-list">
-                <!-- Recommendations will be populated here by JavaScript -->
             </div>
         </div>
 
         <div id="module-detailed-info" class="page-module hidden detailed-info-section">
             <h2 id="detailed-career-name"></h2>
             <div id="detailed-career-content">
-                <!-- Detailed information will be populated here by JavaScript -->
             </div>
             <div class="button-container">
                 <button id="back-to-recommendations-button">返回职业列表</button>
             </div>
         </div>
-    </div>
+    </div> <!-- Closes app-content-wrapper -->
 
-    <!-- 加载动画容器 -->
     <div id="loading-animation" class="loading-container hidden">
         <div class="loading-spinner"></div>
         <div class="loading-text" id="loading-text">职业分析中...</div>
@@ -964,6 +1516,17 @@
             const progressBar = document.getElementById('progressBar');
             const hollandProgressBar = document.getElementById('hollandProgressBar');
             const hollandProgressText = document.getElementById('hollandProgressText');
+
+            const newLandingPageContent = document.getElementById('new-landing-page-content');
+            const appContentWrapper = document.getElementById('app-content-wrapper');
+            const navbar = document.querySelector('.navbar'); // Get navbar element
+            
+            const startButtonNav = document.getElementById('start-assistant-button-nav');
+            const startButtonHero = document.getElementById('start-assistant-button-hero');
+            const startButtonCta = document.getElementById('start-assistant-button-cta');
+
+            const progressContainer = document.getElementById('progressContainer');
+
 
             const moduleBasicInfo = document.getElementById('module-basic-info');
             const moduleHollandQuestions = document.getElementById('module-holland-questions');
@@ -988,32 +1551,192 @@
             let currentHollandQuestion = 1;
             const hollandAnswers = {};
 
-            // 更新完整的进度条和节点式显示
+            // --- START: MBTI Data ---
+            const mbtiData = {
+                "ISTJ": {
+                    title: "ISTJ (检查员/物流师)",
+                    description: "严肃、安静、通过全面和可靠获得成功。实际、有序、实事求是、有逻辑、现实且可信赖。他们重视传统和忠诚，有明确的内部标准。",
+                    strengths: ["一丝不苟、注重细节", "高度负责、值得信赖", "强大的组织能力", "遵守规则和秩序"],
+                    weaknesses: ["有时显得固执、缺乏灵活性", "不太适应突发变化", "可能忽视他人情感需求", "倾向于过度批判"],
+                    careers: ["审计、会计、项目管理、土木工程、法律、军事、数据库管理、供应链管理"]
+                },
+                "ISFJ": {
+                    title: "ISFJ (守护者/照顾者)",
+                    description: "安静、友好、负责任且有良心。致力于并坚定地履行他们的义务。彻底、任劳任怨、准确。忠诚、体贴、注意和记住他们重视的人的细节，关心他人的感受。",
+                    strengths: ["富有同情心、乐于助人", "可靠、有奉献精神", "注重细节和实用性", "有耐心、善于倾听"],
+                    weaknesses: ["倾向于过度牺牲自我", "不喜欢冲突、可能压抑自己", "对批评敏感", "不愿接受新方法"],
+                    careers: ["护理、教学、社会工作、客户服务、行政管理、图书管理、人力资源专员"]
+                },
+                "INFJ": {
+                    title: "INFJ (引领者/作家)",
+                    description: "寻求意义和目的，关心他人。有强烈的价值观，有远见。通常具有说服力，有洞察力，致力于他们的想法。他们是独立的，有强烈的个人原则。",
+                    strengths: ["富有洞察力、理解他人动机", "有创造力、富有想象力", "坚定执着、有远见", "有同情心、关心他人"],
+                    weaknesses: ["有时过于理想主义", "对批评高度敏感", "有完美主义倾向", "可能忽视自身需求"],
+                    careers: ["心理咨询、写作/编辑、艺术设计、教育、科研、非营利组织管理、人力资源发展"]
+                },
+                "INTJ": {
+                    title: "INTJ (战略家/策划者)",
+                    description: "具有原创思想，并有强大的动力去实现他们的想法和目标。能够迅速看到模式和可能性。战略家，有远见，有能力计划和执行复杂的项目。",
+                    strengths: ["战略思维、有远见", "独立自主、自信", "逻辑性强、善于分析", "高标准、追求卓越"],
+                    weaknesses: ["可能显得傲慢、不耐烦", "忽视他人情感、不善交际", "过于批判、要求苛刻", "不愿妥协"],
+                    careers: ["科学研究、战略规划、管理咨询、技术工程、计算机编程、法律、金融分析"]
+                },
+                "ISTP": {
+                    title: "ISTP (手艺人/鉴赏家)",
+                    description: "容忍和灵活，是冷静的观察者，直到问题出现，然后迅速行动，找到可行的解决方案。分析什么使事物运转，并能轻松地从大量数据中找到核心。",
+                    strengths: ["动手能力强、解决实际问题", "冷静客观、适应性强", "观察敏锐、注重效率", "喜欢探索和体验"],
+                    weaknesses: ["可能显得冷漠、不合群", "不喜欢理论和抽象概念", "缺乏长远规划、容易冲动", "对规则和承诺感到束缚"],
+                    careers: ["工程技术、机械维修、计算机技术支持、警察/消防员、飞行员、手工艺制作、体育运动"]
+                },
+                "ISFP": {
+                    title: "ISFP (艺术家/创作者)",
+                    description: "安静、友好、敏感且善良。享受当下，享受他们周围发生的事情。喜欢拥有自己的空间，并按照自己的时间表工作。忠于他们的价值观和对他们重要的人。",
+                    strengths: ["富有艺术感、审美能力强", "温和友善、有同情心", "注重当下、享受生活", "忠于内心价值观"],
+                    weaknesses: ["不喜欢冲突、逃避问题", "对批评敏感、容易受伤", "缺乏长远规划、随性", "不善于表达自己的需求"],
+                    careers: ["艺术设计、音乐创作、时尚行业、烹饪、园艺、自由职业、兽医助理"]
+                },
+                "INFP": {
+                    title: "INFP (哲学家/诗人)",
+                    description: "理想主义者，忠于他们的价值观和对他们重要的人。想要一个符合他们价值观的外部生活。好奇，很快看到可能性，可以成为实施想法的催化剂。",
+                    strengths: ["富有创造力、想象力丰富", "有同情心、理解他人", "坚持理想和价值观", "善于写作和表达情感"],
+                    weaknesses: ["过于理想主义、不切实际", "对批评敏感、容易受挫", "不善于处理琐事和细节", "有时难以做决定"],
+                    careers: ["写作/编辑、心理咨询、艺术创作、社会工作、教育研究、人力资源、非营利组织"]
+                },
+                "INTP": {
+                    title: "INTP (逻辑学家/思想家)",
+                    description: "寻求对事物进行逻辑解释。理论性和抽象性，对思想比对社交互动更感兴趣。安静、内向、灵活、适应性强。对他们感兴趣的问题有异常深入的专注。",
+                    strengths: ["逻辑严谨、分析能力强", "富有创造力、思维活跃", "独立思考、不盲从", "对知识有强烈的好奇心"],
+                    weaknesses: ["可能显得不近人情、忽视他人感受", "不善于处理实际事务", "过于挑剔、难以满足", "倾向于拖延、缺乏执行力"],
+                    careers: ["科学研究、计算机编程、哲学、数学、战略分析、大学教授、技术写作"]
+                },
+                "ESTP": {
+                    title: "ESTP (行动派/挑战者)",
+                    description: "灵活和容忍，他们采取务实的方法，专注于即时结果。理论和概念性的解释使他们厌烦——他们想精力充沛地解决问题。",
+                    strengths: ["行动力强、讲求实际", "适应性强、机智灵活", "善于交际、有说服力", "勇于冒险、乐于挑战"],
+                    weaknesses: ["可能缺乏耐心、容易冲动", "不喜欢规则和约束", "有时会忽视他人感受", "不善于做长远规划"],
+                    careers: ["销售、市场营销、创业、警察/消防员、急救服务、体育教练、项目管理（短期）"]
+                },
+                "ESFP": {
+                    title: "ESFP (表演者/娱乐家)",
+                    description: "外向、友好且接纳。热爱生活、人和物质享受。喜欢与他人一起工作，使事情发生。将常识和现实的方法带到他们的工作中，并使工作变得有趣。",
+                    strengths: ["热情洋溢、富有感染力", "善于交际、喜欢与人互动", "注重实际、享受当下", "适应性强、乐于助人"],
+                    weaknesses: ["可能过于关注享乐、缺乏自律", "不喜欢理论和抽象思考", "容易分心、难以坚持", "对批评敏感"],
+                    careers: ["演艺、活动策划、销售、客户服务、旅游业、美容时尚、儿童教育"]
+                },
+                "ENFP": {
+                    title: "ENFP (激励者/记者)",
+                    description: "热情、富有想象力。认为生活充满了可能性。能够很快地在事件和信息之间建立联系，并根据他们看到的模式自信地进行。需要大量的肯定，并且很容易给予赞赏和支持。",
+                    strengths: ["富有创造力、充满热情", "善于沟通、激励他人", "适应性强、乐于尝试新事物", "洞察力强、能看到可能性"],
+                    weaknesses: ["容易分心、难以坚持完成任务", "不喜欢例行公事和细节", "可能过于理想化", "有时难以兑现承诺"],
+                    careers: ["市场营销、广告创意、咨询、公共关系、写作/记者、人力资源、创业"]
+                },
+                "ENTP": {
+                    title: "ENTP (发明家/辩论家)",
+                    description: "敏捷、巧妙，并富有启发性。善于阅读他人。直言不讳，在争论中思维敏捷。善于分析复杂问题，并能迅速提出新的解决方案。",
+                    strengths: ["富有创造力、思维敏捷", "善于辩论、有说服力", "适应性强、喜欢挑战", "战略眼光、能抓住机遇"],
+                    weaknesses: ["可能显得好辩、不耐烦", "不喜欢细节和重复性工作", "有时难以集中精力完成任务", "可能忽视他人感受"],
+                    careers: ["创业、咨询、法律（辩护律师）、市场营销、工程设计、政治、广播/媒体"]
+                },
+                "ESTJ": {
+                    title: "ESTJ (管理者/监督者)",
+                    description: "实际、现实、实事求是。果断，一旦做出决定就迅速行动。组织项目和人员以完成任务，专注于以最有效的方式获得结果。",
+                    strengths: ["组织能力强、注重效率", "果断、有决断力", "负责任、值得信赖", "遵守规则、讲求实际"],
+                    weaknesses: ["可能显得固执、缺乏灵活性", "不太关注他人情感需求", "有时过于专断", "不喜欢处理不确定性"],
+                    careers: ["管理层、项目管理、金融、执法、军事指挥官、运营管理、工程管理"]
+                },
+                "ESFJ": {
+                    title: "ESFJ (主人型/供给者)",
+                    description: "热心、健谈、受欢迎。有责任心、合作，并积极参与社区活动。努力工作以确保事情顺利进行。喜欢在有组织和和谐的环境中工作。",
+                    strengths: ["乐于助人、有同情心", "善于交际、有团队精神", "有责任心、注重细节", "营造和谐氛围"],
+                    weaknesses: ["不喜欢冲突、可能过分迁就", "对批评敏感、寻求认可", "可能过于关注他人需求而忽视自己", "有时难以接受改变"],
+                    careers: ["教学、护理、客户服务、人力资源、活动策划、行政管理、社区服务"]
+                },
+                "ENFJ": {
+                    title: "ENFJ (教导者/主人公)",
+                    description: "热情、富有同情心、反应灵敏且负责任。高度关注他人的情感、需求和动机。发现每个人身上的潜力，并希望帮助他人发挥潜力。",
+                    strengths: ["富有魅力、善于激励他人", "有同情心、理解他人需求", "有组织能力、善于协调", "有远见、能鼓舞人心"],
+                    weaknesses: ["可能过于理想主义、容易失望", "有时会过度干涉他人", "对批评敏感、寻求他人认可", "可能忽视自身需求"],
+                    careers: ["教育、咨询、人力资源管理、公共关系、非营利组织领导、销售管理、教练"]
+                },
+                "ENTJ": {
+                    title: "ENTJ (统帅/指挥官)",
+                    description: "坦率、果断，并乐于承担领导角色。迅速看到不合逻辑和低效率的程序和政策，制定并实施全面的系统来解决组织问题。",
+                    strengths: ["有远见、战略思维强", "果断、有领导力", "逻辑清晰、善于解决问题", "自信、有魄力"],
+                    weaknesses: ["可能显得专横、不耐烦", "不太关注他人情感", "对不同意见缺乏耐心", "有时过于追求效率而忽视过程"],
+                    careers: ["企业高管、管理咨询、创业、法律（律师/法官）、项目管理、金融分析、政治家"]
+                }
+            };
+            // --- END: MBTI Data ---
+
+            // --- START: Holland Data ---
+            const hollandCodeData = {
+                R: {
+                    name: "现实型 (Realistic)",
+                    description: "喜欢运用技能、工具和机器，动手能力强，偏好具体、实际的任务。适合与具体事物打交道的工作。",
+                    careers: ["工程师、机械师、飞行员、计算机硬件技师、建筑工人、农民、警察、消防员"]
+                },
+                I: {
+                    name: "研究型 (Investigative)",
+                    description: "喜欢思考、分析、探索和解决问题，对科学和智力活动感兴趣。适合需要观察、评估、分析和解决复杂问题的工作。",
+                    careers: ["科学家（物理、化学、生物等）、研究员、医生、数学家、计算机程序员、系统分析师、侦探"]
+                },
+                A: {
+                    name: "艺术型 (Artistic)",
+                    description: "喜欢通过艺术形式进行自我表达，富有创造力、想象力和直觉。适合非结构化、允许自我表达和创新的工作。",
+                    careers: ["设计师（平面、室内、时尚等）、作家、音乐家、演员、画家、摄影师、广告创意人员"]
+                },
+                S: {
+                    name: "社会型 (Social)",
+                    description: "喜欢与人交往、帮助他人、教导或提供服务，关心社会问题。适合需要人际交往、同情心和教学能力的工作。",
+                    careers: ["教师、辅导员、社会工作者、护士、人力资源专员、客户服务代表、牧师"]
+                },
+                E: {
+                    name: "企业型 (Enterprising)",
+                    description: "喜欢影响、说服、领导或管理他人以达到组织目标或经济利益。精力充沛、自信、有抱负。适合需要领导力、竞争和商业头脑的工作。",
+                    careers: ["企业家、销售经理、市场营销专员、管理人员、律师、政治家、公共关系专员"]
+                },
+                C: {
+                    name: "常规型 (Conventional)",
+                    description: "喜欢处理数据、注重细节、遵守规则和程序，偏好有条理、结构化的任务。适合需要精确性、组织性和效率的工作。",
+                    careers: ["会计师、行政助理、银行职员、图书管理员、计算机操作员、秘书、质量控制检查员"]
+                }
+            };
+            // --- END: Holland Data ---
+
+            function initializePage() {
+                if(newLandingPageContent) newLandingPageContent.classList.remove('hidden');
+                if(appContentWrapper) appContentWrapper.classList.add('hidden');
+                if (progressContainer) progressContainer.classList.add('hidden');
+                if (moduleBasicInfo) moduleBasicInfo.classList.add('hidden');
+                if (moduleHollandQuestions) moduleHollandQuestions.classList.add('hidden');
+                if (moduleResults) moduleResults.classList.add('hidden');
+                if (moduleDetailedInfo) moduleDetailedInfo.classList.add('hidden');
+                if (navbar) navbar.classList.remove('hidden'); // Show navbar on init
+            }
+
+
             function updateMainProgress(step) {
                 let progress = 0;
-                if (step === 1) progress = 0; // Basic Info visible
-                else if (step === 2) progress = 25; // Holland test visible
-                else if (step === 3) progress = 50; // Analysis (loading)
-                else if (step === 4) progress = 75; // Results shown
-                else if (step === 5) progress = 100; // Details shown
+                if (step === 1) progress = 0; 
+                else if (step === 2) progress = 25; 
+                else if (step === 3) progress = 50; 
+                else if (step === 4) progress = 75; 
+                else if (step === 5) progress = 100; 
                 
-                progressBar.style.width = progress + '%';
+                if(progressBar) progressBar.style.width = progress + '%';
                 
-                // 更新节点状态
                 const steps = document.querySelectorAll('.progress-step');
                 steps.forEach((stepElement, index) => {
                     const stepNum = index + 1;
+                    if(!stepElement) return;
                     
                     if (stepNum < step) {
-                        // 已完成的步骤
                         stepElement.classList.remove('active');
                         stepElement.classList.add('completed');
                     } else if (stepNum === step) {
-                        // 当前活跃步骤
                         stepElement.classList.add('active');
                         stepElement.classList.remove('completed');
                     } else {
-                        // 未开始的步骤
                         stepElement.classList.remove('active', 'completed');
                     }
                 });
@@ -1028,109 +1751,109 @@
 
                 hollandProgressText.textContent = `问题 ${questionNumber} / ${numTotalHollandQuestions}`;
                 hollandProgressBar.style.width = ((questionNumber -1) / numTotalHollandQuestions) * 100 + '%'; 
-                // ^ -1 because we want it full on last question *after* answering it
 
                 prevQuestionButton.classList.toggle('hidden', questionNumber === 1);
                 nextQuestionButton.classList.toggle('hidden', questionNumber === numTotalHollandQuestions);
                 analyzeButton.classList.toggle('hidden', questionNumber !== numTotalHollandQuestions);
+                
+                hollandProgressText.classList.remove('hidden');
+                hollandProgressBar.parentElement.classList.remove('hidden');
             }
 
-            nextToHollandButton.addEventListener('click', () => {
-                if (!mbtiInput.value.trim() || !cityInput.value.trim()) {
-                    // Consider replacing alert with inline validation message for better UX
-                    alert('请填写MBTI和城市信息。'); 
-                    return;
-                }
-                moduleBasicInfo.classList.add('hidden');
-                moduleHollandQuestions.classList.remove('hidden');
-                showHollandQuestion(currentHollandQuestion);
-                updateMainProgress(2);
-                window.scrollTo(0, 0);
-            });
-
-            nextQuestionButton.addEventListener('click', () => {
-                const currentAnswer = document.querySelector(`input[name="q${currentHollandQuestion}"]:checked`);
-                if (!currentAnswer) {
-                    alert('请选择一个答案后再进入下一题。');
-                    return;
-                }
-                hollandAnswers[`q${currentHollandQuestion}`] = currentAnswer.value;
-
-                if (currentHollandQuestion < numTotalHollandQuestions) {
-                    currentHollandQuestion++;
+            if(nextToHollandButton) {
+                nextToHollandButton.addEventListener('click', () => {
+                    if (!mbtiInput.value.trim() || !cityInput.value.trim()) {
+                        alert('请填写MBTI和城市信息。'); 
+                        return;
+                    }
+                    if(moduleBasicInfo) moduleBasicInfo.classList.add('hidden');
+                    if(moduleHollandQuestions) moduleHollandQuestions.classList.remove('hidden');
+                    currentHollandQuestion = 1;
                     showHollandQuestion(currentHollandQuestion);
-                } 
-                // Final question's progress bar update
-                if(currentHollandQuestion === numTotalHollandQuestions) {
-                     hollandProgressBar.style.width = (currentHollandQuestion / numTotalHollandQuestions) * 100 + '%'; 
-                }
-            });
+                    updateMainProgress(2);
+                    window.scrollTo(0, 0);
+                });
+            }
 
-            prevQuestionButton.addEventListener('click', () => {
-                if (currentHollandQuestion > 1) {
-                    currentHollandQuestion--;
-                    showHollandQuestion(currentHollandQuestion);
-                }
-            });
+            if(nextQuestionButton){
+                nextQuestionButton.addEventListener('click', () => {
+                    const currentAnswer = document.querySelector(`input[name="q${currentHollandQuestion}"]:checked`);
+                    if (!currentAnswer) {
+                        alert('请选择一个答案后再进入下一题。');
+                        return;
+                    }
+                    hollandAnswers[`q${currentHollandQuestion}`] = currentAnswer.value;
 
-            analyzeButton.addEventListener('click', () => {
-                const currentAnswer = document.querySelector(`input[name="q${currentHollandQuestion}"]:checked`);
-                if (!currentAnswer) {
-                    alert('请回答当前问题以完成分析。');
-                    return;
-                }
-                hollandAnswers[`q${currentHollandQuestion}`] = currentAnswer.value;
-                
-                // Final check if all answers are there (though UI should enforce this)
-                if (Object.keys(hollandAnswers).length < numTotalHollandQuestions) {
-                    alert('请确保所有霍兰德问题都已回答。');
-                    return;
-                }
-                handleAnalysis();
-            });
+                    if (currentHollandQuestion < numTotalHollandQuestions) {
+                        currentHollandQuestion++;
+                        showHollandQuestion(currentHollandQuestion);
+                    } 
+                    if(currentHollandQuestion === numTotalHollandQuestions && hollandProgressBar) {
+                         hollandProgressBar.style.width = (currentHollandQuestion / numTotalHollandQuestions) * 100 + '%'; 
+                    }
+                });
+            }
 
-            backToRecommendationsButton.addEventListener('click', showRecommendationsView);
+            if(prevQuestionButton){
+                prevQuestionButton.addEventListener('click', () => {
+                    if (currentHollandQuestion > 1) {
+                        currentHollandQuestion--;
+                        showHollandQuestion(currentHollandQuestion);
+                    }
+                });
+            }
 
-            // 加载动画控制函数
+            if(analyzeButton) {
+                analyzeButton.addEventListener('click', () => {
+                    const currentAnswer = document.querySelector(`input[name="q${currentHollandQuestion}"]:checked`);
+                    if (!currentAnswer) {
+                        alert('请回答当前问题以完成分析。');
+                        return;
+                    }
+                    hollandAnswers[`q${currentHollandQuestion}`] = currentAnswer.value;
+                    
+                    if (Object.keys(hollandAnswers).length < numTotalHollandQuestions) {
+                        alert('请确保所有霍兰德问题都已回答。');
+                        return;
+                    }
+                    handleAnalysis();
+                });
+            }
+
+            if(backToRecommendationsButton) {
+                backToRecommendationsButton.addEventListener('click', showRecommendationsView);
+            }
+            
             function showLoadingAnimation(message = "正在分析中...", subtext = "AI正在深度分析你的个人特质和职业倾向，请稍候...") {
                 const loadingElement = document.getElementById('loading-animation');
-                const loadingText = document.getElementById('loading-text');
-                const loadingSubtext = document.getElementById('loading-subtext');
-                const loadingProgressBar = document.getElementById('loading-progress-bar');
+                const loadingTextElement = document.getElementById('loading-text');
+                const loadingSubtextElement = document.getElementById('loading-subtext');
+                const loadingProgressBarElement = document.getElementById('loading-progress-bar');
                 
-                loadingText.textContent = message;
-                loadingSubtext.textContent = subtext;
-                loadingProgressBar.style.width = '0%';
+                if(!loadingElement || !loadingTextElement || !loadingSubtextElement || !loadingProgressBarElement) return { completeLoading: () => {} };
+
+                loadingTextElement.textContent = message;
+                loadingSubtextElement.textContent = subtext;
+                loadingProgressBarElement.style.width = '0%';
                 loadingElement.classList.remove('hidden');
                 
-                // 模拟20秒的加载进度
                 let progress = 0;
-                const totalTime = 20000; // 20秒
-                const interval = 200; // 每200毫秒更新一次
+                const totalTime = 20000; 
+                const interval = 200; 
                 const increment = (interval / totalTime) * 100;
                 
-                const progressInterval = setInterval(() => {
+                const progressIntervalId = setInterval(() => {
                     progress += increment;
-                    
-                    // 添加一些随机性，让进度条看起来更自然
-                    if (progress < 70) {
-                        progress += Math.random() * 0.5;
-                    } else if (progress < 90) {
-                        progress += Math.random() * 0.2;
-                    }
-                    
-                    // 确保进度不会超过99%，除非完成
-                    if (progress > 99) {
-                        progress = 99;
-                    }
-                    
-                    loadingProgressBar.style.width = `${progress}%`;
+                    if (progress < 70) progress += Math.random() * 0.5;
+                    else if (progress < 90) progress += Math.random() * 0.2;
+                    if (progress > 99) progress = 99;
+                    loadingProgressBarElement.style.width = `${progress}%`;
                 }, interval);
                 
                 return {
                     completeLoading: () => {
-                        clearInterval(progressInterval);
-                        loadingProgressBar.style.width = '100%';
+                        clearInterval(progressIntervalId);
+                        loadingProgressBarElement.style.width = '100%';
                         setTimeout(() => {
                             loadingElement.classList.add('hidden');
                         }, 500);
@@ -1143,34 +1866,23 @@
                 const mbti = mbtiInput.value.trim();
                 const city = cityInput.value.trim();
                 
-                analyzeButton.disabled = true;
-                analyzeButton.textContent = "分析中...";
+                if(analyzeButton) {
+                    analyzeButton.disabled = true;
+                    analyzeButton.textContent = "分析中...";
+                }
                 
-                // 使用 FormData 来发送数据，包括文件
                 const formData = new FormData();
                 formData.append('mbti', mbti);
                 formData.append('city', city);
                 
-                // 收集霍兰德答案
-                const hollandAnswers = {};
-                for (let i = 1; i <= 6; i++) {
-                    const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
-                    if (selectedOption) {
-                        hollandAnswers[`q${i}`] = selectedOption.value;
-                    }
-                }
                 formData.append('holland_answers', JSON.stringify(hollandAnswers));
                 
-                // 添加简历文件
                 if (resumeFile) {
                     formData.append('resume', resumeFile);
                 }
                 
                 try {
-                    // 显示加载动画
-                    const loadingAnimation = showLoadingAnimation("AI职业分析中...", "正在深度分析你的MBTI类型、兴趣特质和简历内容，生成个性化职业推荐...");
-                    
-                    // 更新进度条，表示分析阶段
+                    const loadingAnimation = showLoadingAnimation("AI职业分析中...", "正在深度分析您的MBTI类型、兴趣特质和简历内容，生成个性化职业推荐...");
                     updateMainProgress(3);
                     
                     const response = await fetch('http://47.110.41.233:5000/api/analyze', { 
@@ -1178,573 +1890,465 @@
                         body: formData,
                     });
                     
-                    // 完成加载动画
                     loadingAnimation.completeLoading();
                     
                     if (!response.ok) {
-                        throw new Error(`服务器返回错误: ${response.status}`);
+                        const errorData = await response.text();
+                        throw new Error(`服务器返回错误: ${response.status} - ${errorData}`);
                     }
                     
                     const data = await response.json();
-                    
-                    // 更新进度到结果阶段
                     updateMainProgress(4);
-                    
-                    // 解析并显示解读内容
                     displayInsightsAndRecommendations(data);
-                    
-                    // 显示结果页面
                     showResultsPage();
                     
                 } catch (error) {
                     alert(`分析错误: ${error.message}`);
-                    analyzeButton.disabled = false;
-                    analyzeButton.textContent = "开始分析";
+                    if(analyzeButton){
+                        analyzeButton.disabled = false;
+                        analyzeButton.textContent = "完成并分析";
+                    }
                 }
             }
 
-            // 辅助函数：仅显示职业推荐列表
-            function displayRecommendations(recommendations) {
-                const recommendationsList = document.getElementById('career-recommendations-list');
-                recommendationsList.innerHTML = ''; 
-                
-                if (recommendations && recommendations.length > 0) {
-                    recommendations.forEach(rec => {
-                        const div = document.createElement('div');
-                        div.classList.add('career-recommendation');
-                        
-                        // 确保百分比格式正确 (xx%)
-                        let percentage = rec.percentage || rec.match_percentage;
-                        if (percentage) {
-                            if (typeof percentage === 'number') {
-                                percentage = percentage + '%';
-                            }
-                        } else {
-                            percentage = Math.floor(70 + Math.random() * 25) + '%';
-                        }
-                        
-                        div.innerHTML = `
-                            <h3>${rec.name} <span class="percentage">${percentage}</span></h3>
-                            <div class="short-desc">${rec.short_description || ''}</div>
-                            <div class="reason">${rec.reason || ''}</div>
-                        `;
-                        
-                        // 添加点击事件 - 使用与原代码相同的处理函数
-                        div.addEventListener('click', () => handleCareerSelection(rec));
-                        
-                        recommendationsList.appendChild(div);
-                    });
-                } else {
-                    recommendationsList.innerHTML = '<p>抱歉，暂时未能生成职业推荐。请检查输入或稍后再试。</p>';
-                }
-            }
-
-            // 更加严格地解析AI返回的insight文本，确保三类内容完全区分
             function parseInsightText(insightText) {
-                if (!insightText) return {
-                    mbti: "AI无法提供MBTI解读。",
-                    holland: "AI无法提供霍兰德模型解读。",
-                    resume: "AI无法提供简历解读。"
-                };
-                
-                // 初始化各部分内容
-                let mbtiContent = "";
+                // This function will now primarily focus on Holland and Resume,
+                // as MBTI will be handled separately by displayInsightsAndRecommendations.
+                // However, we keep its structure in case backend provides some useful text for Holland/Resume.
+
                 let hollandContent = "";
                 let resumeContent = "";
+
+                const defaultMessages = {
+                    // MBTI default is not strictly needed here anymore if handled by standardized content
+                    holland: "AI未能提供明确的霍兰德兴趣解读。请检查输入信息或稍后再试。"
+                    // Removed resume default message
+                };
                 
-                try {
-                    // 严格的MBTI内容标识词
-                    const mbtiIdentifiers = [
-                        "ISTJ", "ISFJ", "INFJ", "INTJ", "ISTP", "ISFP", "INFP", "INTP", 
-                        "ESTP", "ESFP", "ENFP", "ENTP", "ESTJ", "ESFJ", "ENFJ", "ENTJ",
-                        "内向型", "外向型", "感觉型", "直觉型", "思考型", "情感型", "判断型", "知觉型",
-                        "内向", "外向", "感觉", "直觉", "思考", "情感", "判断", "知觉",
-                        "I型人格", "E型人格", "S型人格", "N型人格", "T型人格", "F型人格", "J型人格", "P型人格"
-                    ];
-                    
-                    // 严格的霍兰德模型标识词
-                    const hollandIdentifiers = [
-                        "RIASEC", "霍兰德", "Holland", 
-                        "现实型", "研究型", "艺术型", "社会型", "企业型", "常规型",
-                        "R型", "I型", "A型", "S型", "E型", "C型",
-                        "实用型", "调查型", "艺术型", "社交型", "企业型", "传统型"
-                    ];
-                    
-                    // 简历和能力相关的标识词
-                    const resumeIdentifiers = [
-                        "简历", "经验", "能力", "技能", "教育", "专业", "背景", 
-                        "擅长", "专长", "职业发展", "工作经历", "项目经验"
-                    ];
-                    
-                    // 步骤1: 尝试找到明确的章节标题
-                    let mbtiSection = extractSectionByTitle(insightText, ["MBTI", "人格类型", "性格特点"]);
-                    let hollandSection = extractSectionByTitle(insightText, ["霍兰德", "Holland", "职业兴趣", "兴趣类型"]);
-                    let resumeSection = extractSectionByTitle(insightText, ["简历分析", "能力解析", "技能分析", "专业背景"]);
-                    
-                    // 步骤2: 如果找到明确的章节，就使用这些内容
-                    if (mbtiSection) mbtiContent = mbtiSection;
-                    if (hollandSection) hollandContent = hollandSection;
-                    if (resumeSection) resumeContent = resumeSection;
-                    
-                    // 步骤3: 如果没有找到完整的章节，分析每个句子
-                    if (!mbtiContent || !hollandContent || !resumeContent) {
-                        const sentences = splitIntoSentences(insightText);
-                        const assignedSentences = new Set(); // 记录已分配的句子，避免重复
-                        
-                        // 首先为每个类别分配最明确的内容
-                        sentences.forEach((sentence, index) => {
-                            // 检查是否包含MBTI明确标识符
-                            if (!mbtiContent && containsAny(sentence, mbtiIdentifiers) && !assignedSentences.has(index)) {
-                                mbtiContent += sentence + " ";
-                                assignedSentences.add(index);
-                                
-                                // 获取上下文相关句子
-                                const contextSentences = getContextSentences(sentences, index, 2);
-                                contextSentences.forEach(ctxIdx => {
-                                    if (!assignedSentences.has(ctxIdx) && !containsAny(sentences[ctxIdx], hollandIdentifiers) && !containsAny(sentences[ctxIdx], resumeIdentifiers)) {
-                                        mbtiContent += sentences[ctxIdx] + " ";
-                                        assignedSentences.add(ctxIdx);
-                                    }
-                                });
-                            }
-                            
-                            // 检查是否包含霍兰德明确标识符
-                            if (!hollandContent && containsAny(sentence, hollandIdentifiers) && !assignedSentences.has(index)) {
-                                hollandContent += sentence + " ";
-                                assignedSentences.add(index);
-                                
-                                // 获取上下文相关句子
-                                const contextSentences = getContextSentences(sentences, index, 2);
-                                contextSentences.forEach(ctxIdx => {
-                                    if (!assignedSentences.has(ctxIdx) && !containsAny(sentences[ctxIdx], mbtiIdentifiers) && !containsAny(sentences[ctxIdx], resumeIdentifiers)) {
-                                        hollandContent += sentences[ctxIdx] + " ";
-                                        assignedSentences.add(ctxIdx);
-                                    }
-                                });
-                            }
-                            
-                            // 检查是否包含简历明确标识符
-                            if (!resumeContent && containsAny(sentence, resumeIdentifiers) && !assignedSentences.has(index)) {
-                                resumeContent += sentence + " ";
-                                assignedSentences.add(index);
-                                
-                                // 获取上下文相关句子
-                                const contextSentences = getContextSentences(sentences, index, 2);
-                                contextSentences.forEach(ctxIdx => {
-                                    if (!assignedSentences.has(ctxIdx) && !containsAny(sentences[ctxIdx], mbtiIdentifiers) && !containsAny(sentences[ctxIdx], hollandIdentifiers)) {
-                                        resumeContent += sentences[ctxIdx] + " ";
-                                        assignedSentences.add(ctxIdx);
-                                    }
-                                });
-                            }
-                        });
-                        
-                        // 步骤4: 第二轮分配 - 使用更宽松的规则找到其余内容
-                        if (!mbtiContent || !hollandContent || !resumeContent) {
-                            // 划分未分配的句子
-                            const unassignedSentences = sentences.filter((_, idx) => !assignedSentences.has(idx));
-                            
-                            if (unassignedSentences.length > 0) {
-                                // 尝试找出包含关键词但不那么明确的句子
-                                const mbtiKeywords = ["人格", "性格", "特点", "特质", "个性", "处理方式", "决策", "沟通方式"];
-                                const hollandKeywords = ["兴趣", "爱好", "职业倾向", "喜好", "偏好", "职业兴趣"];
-                                const resumeKeywords = ["职业", "工作", "能力", "技能", "专长", "领域", "专业", "知识", "资质"];
-                                
-                                unassignedSentences.forEach((sentence, idx) => {
-                                    const originalIdx = sentences.indexOf(sentence);
-                                    if (assignedSentences.has(originalIdx)) return;
-                                    
-                                    // 模糊匹配MBTI内容
-                                    if (!mbtiContent && containsAny(sentence, mbtiKeywords) && !containsAny(sentence, hollandIdentifiers) && !containsAny(sentence, resumeIdentifiers)) {
-                                        mbtiContent += sentence + " ";
-                                        assignedSentences.add(originalIdx);
-                                    }
-                                    // 模糊匹配霍兰德关键词
-                                    else if (!hollandContent && containsAny(sentence, hollandKeywords) && !containsAny(sentence, mbtiIdentifiers) && !containsAny(sentence, resumeIdentifiers)) {
-                                        hollandContent += sentence + " ";
-                                        assignedSentences.add(originalIdx);
-                                    }
-                                    // 模糊匹配简历关键词
-                                    else if (!resumeContent && containsAny(sentence, resumeKeywords) && !containsAny(sentence, mbtiIdentifiers) && !containsAny(sentence, hollandIdentifiers)) {
-                                        resumeContent += sentence + " ";
-                                        assignedSentences.add(originalIdx);
-                                    }
-                                });
-                            }
-                        }
-                        
-                        // 步骤5：如果仍然有类别没有内容，使用段落或整篇文本划分
-                        const sectionsNeeded = [
-                            { type: 'mbti', content: mbtiContent },
-                            { type: 'holland', content: hollandContent },
-                            { type: 'resume', content: resumeContent }
-                        ].filter(s => !s.content);
-                        
-                        if (sectionsNeeded.length > 0) {
-                            // 提取未分配的文本
-                            const remainingText = sentences
-                                .filter((_, idx) => !assignedSentences.has(idx))
-                                .join(" ");
-                                
-                            if (remainingText.trim()) {
-                                const paragraphs = remainingText.split(/\n{2,}/).filter(p => p.trim());
-                                
-                                // 如果段落数量充足，每个缺失部分分配一个段落
-                                if (paragraphs.length >= sectionsNeeded.length) {
-                                    sectionsNeeded.forEach((section, idx) => {
-                                        if (section.type === 'mbti') mbtiContent = paragraphs[idx];
-                                        else if (section.type === 'holland') hollandContent = paragraphs[idx];
-                                        else if (section.type === 'resume') resumeContent = paragraphs[idx];
-                                    });
-                                } 
-                                // 否则将剩余文本平均分配
-                                else {
-                                    const remainingSentences = splitIntoSentences(remainingText);
-                                    const chunkSize = Math.ceil(remainingSentences.length / sectionsNeeded.length);
-                                    
-                                    sectionsNeeded.forEach((section, idx) => {
-                                        const start = idx * chunkSize;
-                                        const end = Math.min(start + chunkSize, remainingSentences.length);
-                                        const content = remainingSentences.slice(start, end).join(" ");
-                                        
-                                        if (section.type === 'mbti') mbtiContent = content;
-                                        else if (section.type === 'holland') hollandContent = content;
-                                        else if (section.type === 'resume') resumeContent = content;
-                                    });
-                                }
-                            }
-                        }
+                // If the entire insightText is empty, an error, or a "cannot provide" message for Holland/Resume
+                if (!insightText || typeof insightText !== 'string' || insightText.trim() === "" || 
+                    (insightText.toLowerCase().includes("无法") && !insightText.toLowerCase().includes("mbti")) || // Avoid triggering if it's just an MBTI error msg
+                    (insightText.toLowerCase().includes("error") && !insightText.toLowerCase().includes("mbti")) ) {
+                    return { holland: defaultMessages.holland, resume: "", mbti: "" }; // Return empty resume
+                }
+
+                // Keywords are still useful for trying to split backend text if it's monolithic
+                const hollandKeywords = ["holland", "霍兰德", "riasec", "兴趣类型", "职业兴趣", "现实型", "研究型", "艺术型", "社会型", "企业型", "常规型"];
+                // Removed resumeKeywords
+                // MBTI keywords can be used to *exclude* text from being wrongly assigned to Holland/Resume
+                const mbtiKeywords = ["mbti", "人格", "性格", "istj", "isfj", "infj", "intj", "istp", "isfp", "infp", "intp", "estp", "esfp", "enfp", "entp", "estj", "esfj", "enfj", "entj"];
+
+
+                const sections = insightText.split(/\\n\\s*\\n|\\n-\\s*\\n|### |---/).map(s => s.trim()).filter(s => s.length > 0);
+                let assignedToHolland = false;
+                // Removed assignedToResume
+
+                sections.forEach((section) => {
+                    const lowerSection = section.toLowerCase();
+                    // Ensure the section is not primarily about MBTI before assigning to Holland or Resume
+                    if (mbtiKeywords.some(kw => lowerSection.includes(kw))) {
+                        return; // Skip MBTI-related sections
                     }
-                    
-                    // 步骤6：净化内容，移除不属于该类别的内容
-                    mbtiContent = cleanupContent(mbtiContent, 'mbti', hollandIdentifiers, resumeIdentifiers);
-                    hollandContent = cleanupContent(hollandContent, 'holland', mbtiIdentifiers, resumeIdentifiers);
-                    resumeContent = cleanupContent(resumeContent, 'resume', mbtiIdentifiers, hollandIdentifiers);
-                    
-                    // 步骤7：去除重复内容
-                    const contentSet = new Set();
-                    
-                    // 函数：检查并移除重复内容
-                    function deduplicateContent(content) {
-                        const sentences = splitIntoSentences(content);
-                        return sentences.filter(sentence => {
-                            const normalized = sentence.trim().replace(/\s+/g, ' ').toLowerCase();
-                            if (normalized.length < 10 || contentSet.has(normalized)) return false;
-                            contentSet.add(normalized);
-                            return true;
-                        }).join(" ");
-                    }
-                    
-                    mbtiContent = deduplicateContent(mbtiContent);
-                    hollandContent = deduplicateContent(hollandContent);
-                    resumeContent = deduplicateContent(resumeContent);
-                    
-                } catch (error) {
-                    console.error("解析洞察内容时出错:", error);
-                    // 出错时返回基本内容
-                    mbtiContent = "解析MBTI内容时出错。";
-                    hollandContent = "解析霍兰德内容时出错。";
-                    resumeContent = "解析简历内容时出错。";
-                }
+
+                    if (!assignedToHolland && hollandKeywords.some(kw => lowerSection.includes(kw))) {
+                        hollandContent += (hollandContent ? "\\n\\n" : "") + section;
+                        assignedToHolland = true; 
+                    } 
+                    // Removed else if for resumeKeywords
+                    // Logic for unassigned sections can remain or be simplified further if only Holland is expected
+                });
                 
-                // 确保每个部分都有内容
-                if (!mbtiContent.trim()) {
-                    // 检查用户是否输入了MBTI类型
-                    const userMbti = mbtiInput.value.trim().toUpperCase();
-                    // 定义所有有效的MBTI类型
-                    const validMbtiTypes = ["ISTJ", "ISFJ", "INFJ", "INTJ", "ISTP", "ISFP", "INFP", "INTP", 
-                        "ESTP", "ESFP", "ENFP", "ENTP", "ESTJ", "ESFJ", "ENFJ", "ENTJ"];
-                    
-                    if (userMbti && validMbtiTypes.includes(userMbti)) {
-                        mbtiContent = `根据您提供的MBTI类型 ${userMbti}，`;
-                        
-                        if (userMbti === "INFJ") {
-                            mbtiContent += "INFJ型人格被称为'提倡者'或'思想家'。作为最罕见的MBTI类型之一，您具有深度洞察力和强烈的同理心。您擅长理解他人的情感和动机，同时保持自己的独立性和创造力。您通常追求有意义的工作，希望通过自己的努力对世界产生积极影响。您在复杂问题上有独到见解，善于制定长远规划。在职业选择上，您会更倾向于能够发挥您创意和帮助他人的领域，如咨询、心理健康、教育、写作或人道主义工作。";
-                        } else if (userMbti === "INTJ") {
-                            mbtiContent += "INTJ型人格被称为'建筑师'或'策略家'。您具有强大的分析能力和战略思维，能够看到复杂系统中的模式并制定长期计划。您独立、自信且追求卓越，喜欢挑战和解决复杂问题。在职业上，您适合需要高度智力投入和自主性的领域，如科学研究、技术开发、战略规划或系统设计。";
-                        } else if (userMbti === "ENFJ") {
-                            mbtiContent += "ENFJ型人格被称为'主人公'或'教导者'。您天生具有领导才能，擅长激励和引导他人。您富有同情心，能敏锐地察觉他人的需求和情感，同时具有清晰的价值观和组织能力。您追求和谐与合作，在团队中常常起到凝聚作用。在职业选择上，您适合教育、咨询、人力资源、社区组织或其他能发挥您人际影响力的领域。";
-                        } else if (userMbti === "ENTJ") {
-                            mbtiContent += "ENTJ型人格被称为'指挥官'或'领导者'。您天生具有领导气质，擅长逻辑分析和组织规划。您直接、果断且追求效率，能够快速识别系统中的弱点并实施改进。您喜欢挑战和责任，并能激励团队朝共同目标努力。在职业上，您适合管理、战略规划、企业发展或任何需要领导能力和系统思维的领域。";
-                        } else if (userMbti === "ISFJ") {
-                            mbtiContent += "ISFJ型人格被称为'守卫者'或'保护者'。您细心、尽责且关怀他人，对细节有敏锐的洞察力。您尊重传统和稳定，喜欢有序和结构化的环境。您能在后台默默付出，确保一切运转顺畅。在职业上，您适合需要组织能力、耐心和奉献精神的领域，如医疗保健、教育、行政支持或社会服务。";
-                        } else if (userMbti === "ISFP") {
-                            mbtiContent += "ISFP型人格被称为'艺术家'或'冒险家'。您敏感、富有创造力且具有强烈的审美感。您重视个人自由和真实表达，往往通过行动而非言语表达自己。您喜欢灵活多变的环境，不喜欢过多规则和限制。在职业上，您适合能够发挥创意和实践能力的领域，如艺术、设计、手工艺、美容或任何允许您发挥个人风格的工作。";
-                        } else if (userMbti === "ISTJ") {
-                            mbtiContent += "ISTJ型人格被称为'检查员'或'物流师'。您务实、可靠且有条理，重视传统和责任感。您关注细节，遵循规则和程序，喜欢明确的结构和指导。您做事稳健踏实，可以承担长期项目。在职业上，您适合需要细致、精确和可靠性的工作，如会计、行政管理、法律、IT系统管理或质量控制。";
-                        } else if (userMbti === "ISTP") {
-                            mbtiContent += "ISTP型人格被称为'工匠'或'鉴赏家'。您独立、灵活且务实，擅长分析问题并找到实用解决方案。您喜欢用手工作，有天生的机械和工具使用能力。您适应力强，能在危机中保持冷静。在职业上，您适合需要实践技能和即时问题解决能力的领域，如工程、技术支持、急救人员、机械维修或任何需要动手能力的工作。";
-                        } else if (userMbti === "INFP") {
-                            mbtiContent += "INFP型人格被称为'调停者'或'梦想家'。您理想主义、富有同情心且富有创造力，有着强烈的个人价值观。您寻求真实性和目的性，喜欢探索人类潜能。您对他人的困境感同身受，致力于实现更美好的世界。在职业上，您适合能够与个人价值观一致、能帮助他人的工作，如咨询、心理学、写作、教育或非营利组织工作。";
-                        } else if (userMbti === "INTP") {
-                            mbtiContent += "INTP型人格被称为'逻辑学家'或'思想家'。您具有极强的分析能力和创新思维，善于发现复杂问题中的模式。您重视知识和逻辑，喜欢挑战传统观念。您独立且有好奇心，不断探索新的可能性。在职业上，您适合需要深入思考和理论创新的领域，如科学研究、软件开发、系统分析、哲学或任何允许您探索复杂概念的工作。";
-                        } else if (userMbti === "ESTP") {
-                            mbtiContent += "ESTP型人格被称为'企业家'或'冒险家'。您精力充沛、灵活且实用主义，善于解决紧急问题。您喜欢行动和冒险，能够在压力下迅速适应变化。您观察力敏锐，能快速掌握新技能。在职业上，您适合充满活力和即时挑战的工作，如销售、创业、危机管理、运动教练或任何允许您在行动中解决问题的角色。";
-                        } else if (userMbti === "ESFP") {
-                            mbtiContent += "ESFP型人格被称为'表演者'或'娱乐者'。您热情开朗，喜欢成为关注的焦点，擅长活跃气氛。您善于观察他人需求，乐于提供实际帮助。您享受当下，偏好实际体验而非理论。在职业上，您适合能够与他人互动、充满活力的环境，如活动策划、销售、表演艺术、酒店服务业或任何能让您展示个人魅力的工作。";
-                        } else if (userMbti === "ENFP") {
-                            mbtiContent += "ENFP型人格被称为'活动家'或'冠军'。您富有创造力、热情且善于社交，能够看到他人的潜力和可能性。您喜欢新想法和挑战，有着强烈的好奇心。您能激励他人，并寻找有意义的联系。在职业上，您适合能够发挥创意和人际交往能力的领域，如市场营销、咨询、创意写作、艺术指导或任何能够让您探索新概念并与人合作的工作。";
-                        } else if (userMbti === "ENTP") {
-                            mbtiContent += "ENTP型人格被称为'辩论家'或'发明家'。您思维敏捷、善于辩论且充满创新精神。您能够快速理解复杂概念并发现新的可能性。您喜欢智力挑战，不断寻求改进现有系统。在职业上，您适合需要创新思维和解决问题能力的领域，如创业、产品开发、战略咨询、研究或任何允许您不断挑战现状的工作。";
-                        } else if (userMbti === "ESTJ") {
-                            mbtiContent += "ESTJ型人格被称为'总监'或'主管'。您有组织、务实且注重结果，善于管理人员和流程。您价值传统、秩序和稳定性，能够制定明确的规则和流程。您负责任且可靠，致力于完成任务。在职业上，您适合需要组织能力和领导才能的岗位，如项目管理、行政领导、财务管理或任何需要建立和维护有效系统的角色。";
-                        } else if (userMbti === "ESFJ") {
-                            mbtiContent += "ESFJ型人格被称为'执政官'或'领事'。您友善、有责任感且关注他人福祉。您重视和谐与合作，善于建立社区感和团队精神。您注重细节，乐于提供实际帮助和支持。在职业上，您适合需要强人际交往能力和服务精神的领域，如医疗保健、教育、人力资源、客户服务或社区组织工作。";
-                        } else if (userMbti === "ENFJ") {
-                            mbtiContent += "ENFJ型人格被称为'主人公'或'教导者'。您天生具有领导才能，擅长激励和引导他人。您富有同情心，能敏锐地察觉他人的需求和情感，同时具有清晰的价值观和组织能力。您追求和谐与合作，在团队中常常起到凝聚作用。在职业选择上，您适合教育、咨询、人力资源、社区组织或其他能发挥您人际影响力的领域。";
-                        } else {
-                            mbtiContent += "该类型反映了您独特的性格特质，包括您如何获取能量、处理信息、做决策以及组织生活。这对您的职业选择有重要影响。建议进一步探索这一类型的具体特点，以便找到更适合您性格特质的职业方向。";
-                        }
-                    } else {
-                        mbtiContent = "未找到明确的MBTI人格分析。您的MBTI类型反映了您的性格特质，包括您如何获取能量、处理信息、做决策以及组织生活。这对您的职业选择有重要影响。";
-                    }
+                // Fallback if no clear sections found but the text seems specific
+                if (sections.length === 1 && !assignedToHolland && !mbtiKeywords.some(kw => sections[0].toLowerCase().includes(kw))) {
+                    const singleSectionLower = sections[0].toLowerCase();
+                     if (hollandKeywords.some(kw => singleSectionLower.includes(kw))) hollandContent = sections[0];
+                     // Removed else if for resumeKeywords 
                 }
-                
-                if (!hollandContent.trim()) {
-                    hollandContent = "未找到明确的霍兰德兴趣分析。霍兰德职业兴趣理论将人分为六种类型：现实型(R)、研究型(I)、艺术型(A)、社会型(S)、企业型(E)和常规型(C)。您的兴趣类型组合能帮助您找到更匹配的职业领域。";
+
+
+                if (!hollandContent || hollandContent.length < 20 || hollandContent.toLowerCase().includes("无法") || hollandContent.toLowerCase().includes("未能")) {
+                    hollandContent = defaultMessages.holland;
                 }
-                
-                if (!resumeContent.trim()) {
-                    resumeContent = "未找到明确的简历分析。您的专业背景、工作经验和技能组合是职业发展的重要基础。根据您提供的信息，建议您寻找能够充分发挥这些优势的职业方向。";
-                }
+                // Removed check for resumeContent and setting its default
                 
                 return {
-                    mbti: mbtiContent.trim(),
+                    // MBTI content is now primarily handled by the new logic in displayInsightsAndRecommendations
+                    mbti: "", // Effectively, parseInsightText no longer provides MBTI content
                     holland: hollandContent.trim(),
-                    resume: resumeContent.trim()
+                    resume: "" // Always return empty string for resume
                 };
             }
             
-            // 辅助函数：根据标题提取章节内容
-            function extractSectionByTitle(text, titleKeywords) {
-                for (const keyword of titleKeywords) {
-                    // 匹配标题行及其后内容直到下一个标题或文本结束
-                    const pattern = new RegExp(`${keyword}[^：:]*[：:]([\\s\\S]*?)(?=\\n\\s*\\n|$)`, 'i');
-                    const match = text.match(pattern);
-                    if (match && match[1] && match[1].trim().length > 20) { // 至少要有一定长度
-                        return match[1].trim();
-                    }
-                }
-                return "";
-            }
-            
-            // 辅助函数：将文本分割成句子
-            function splitIntoSentences(text) {
-                return text.split(/(?<=[。？！.?!])\s*/).filter(s => s.trim().length > 0);
-            }
-            
-            // 辅助函数：检查文本是否包含关键词列表中的任何一个
-            function containsAny(text, keywords) {
-                return keywords.some(keyword => text.includes(keyword));
-            }
-            
-            // 辅助函数：获取上下文相关句子的索引
-            function getContextSentences(sentences, currentIndex, contextSize) {
-                const result = [];
-                // 获取前面的句子
-                for (let i = Math.max(0, currentIndex - contextSize); i < currentIndex; i++) {
-                    result.push(i);
-                }
-                // 获取后面的句子
-                for (let i = currentIndex + 1; i < Math.min(sentences.length, currentIndex + contextSize + 1); i++) {
-                    result.push(i);
-                }
-                return result;
-            }
-            
-            // 辅助函数：净化内容，移除不属于该类别的内容
-            function cleanupContent(content, type, otherTypeIdentifiers1, otherTypeIdentifiers2) {
-                if (!content) return "";
-                
-                const sentences = splitIntoSentences(content);
-                return sentences.filter(sentence => {
-                    // 移除明显属于其他类别的句子
-                    if (type !== 'holland' && containsAny(sentence, otherTypeIdentifiers1)) return false;
-                    if (type !== 'resume' && containsAny(sentence, otherTypeIdentifiers2)) return false;
-                    return true;
-                }).join(" ");
+            function formatInsightText(text) {
+                const keywordsToHighlight = ['适合', '优势', '强项', '特长', '建议', '推荐', '性格特点', '特质', '能力', '专长', '技能', '倾向', '兴趣', '方向', '发展', '职业路径'];
+                let formattedText = text.replace(/\n/g, '<br>');
+                keywordsToHighlight.forEach(keyword => {
+                    const regex = new RegExp(`(${keyword})`, 'g');
+                    formattedText = formattedText.replace(regex, '<strong style="color: #3B82F6;">$1</strong>');
+                });
+                return formattedText;
             }
 
             function displayInsightsAndRecommendations(data) {
-                // 解析综合解读内容 - 使用更强健的方法
-                if (data.insight) {
-                    const insights = parseInsightText(data.insight);
+                // Handle MBTI using standardized content
+                const mbtiType = mbtiInput.value.trim().toUpperCase();
+                const mbtiPElem = document.querySelector('#mbti-insight p');
+                const mbtiTitleElem = document.querySelector('#mbti-insight h3'); // Assuming h3 contains the title + icon
+
+                if (mbtiData[mbtiType] && mbtiPElem && mbtiTitleElem) {
+                    const typeInfo = mbtiData[mbtiType];
+                    mbtiTitleElem.innerHTML = `<div class="insight-icon">👤</div>${typeInfo.title}`;
+                    let mbtiHtml = `<strong>基本特点:</strong> ${typeInfo.description}<br><br>`;
+                    mbtiHtml += `<strong>主要优势:</strong><ul>`;
+                    typeInfo.strengths.forEach(s => mbtiHtml += `<li>${s}</li>`);
+                    mbtiHtml += `</ul><br>`;
+                    mbtiHtml += `<strong>潜在弱点:</strong><ul>`;
+                    typeInfo.weaknesses.forEach(w => mbtiHtml += `<li>${w}</li>`);
+                    mbtiHtml += `</ul><br>`;
+                    mbtiHtml += `<strong>适合领域参考:</strong> ${typeInfo.careers}`;
+                    mbtiPElem.innerHTML = mbtiHtml;
+                } else if (mbtiPElem) {
+                    mbtiPElem.innerHTML = "请输入有效的MBTI类型（例如 INFP, ESTJ）以获取解读。";
+                     if (mbtiTitleElem) mbtiTitleElem.innerHTML = `<div class="insight-icon">👤</div>MBTI 人格解读`;
+                }
+
+                // Attempt to parse Holland & Resume from backend response (if any useful text)
+                // `parseInsightText` will now return an object like { mbti: "", holland: "...", resume: "..." }
+                const parsedBackendInsights = data.insight ? parseInsightText(data.insight) : { holland: "", resume: "", mbti: ""};
+
+                // --- START: Holland Frontend Scoring & Display ---
+                const hollandPElem = document.querySelector('#holland-insight p');
+                const hollandTitleElem = document.querySelector('#holland-insight h3');
+                let frontendHollandInterpretation = "";
+                const scores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+                
+                if (Object.keys(hollandAnswers).length === numTotalHollandQuestions) {
+                    for (const q in hollandAnswers) {
+                        if (scores.hasOwnProperty(hollandAnswers[q])) {
+                            scores[hollandAnswers[q]]++;
+                        }
+                    }
+
+                    const sortedScores = Object.entries(scores).sort(([,a],[,b]) => b-a);
                     
-                    // 更新三个解读卡片的内容
-                    document.getElementById('mbti-insight').querySelector('p').innerHTML = formatInsightText(insights.mbti);
-                    document.getElementById('holland-insight').querySelector('p').innerHTML = formatInsightText(insights.holland);
-                    document.getElementById('resume-insight').querySelector('p').innerHTML = formatInsightText(insights.resume);
+                    frontendHollandInterpretation = "<strong>根据您的问卷回答，您的主要职业兴趣类型可能为：</strong><br>";
+                    let topTypesInfo = [];
+
+                    // Display top 1-3 types, ensuring they have a score > 0
+                    for (let i = 0; i < Math.min(sortedScores.length, 3); i++) {
+                        const typeCode = sortedScores[i][0];
+                        const score = sortedScores[i][1];
+                        if (score > 0 && hollandCodeData[typeCode]) {
+                            const typeData = hollandCodeData[typeCode];
+                            topTypesInfo.push(
+                                `<strong>${i+1}. ${typeData.name} (得分: ${score})</strong>: ${typeData.description}<br><em>参考领域: ${typeData.careers.join(', ')}</em>`
+                            );
+                        } else if (i === 0) { // If even the top score is 0, means no valid answers or issue
+                             break; // Stop if the highest score is 0
+                        }
+                    }
+                    if (topTypesInfo.length > 0) {
+                        frontendHollandInterpretation += topTypesInfo.join("<br><br>");
+                    } else {
+                         frontendHollandInterpretation = "未能根据您的问卷回答计算出明确的霍兰德兴趣类型。请确保已完整回答问卷。";
+                    }
+
+                } else {
+                    frontendHollandInterpretation = "请先完成霍兰德职业兴趣问卷，以获取您的兴趣类型分析。";
                 }
                 
-                // 填充职业推荐列表
-                const recommendationsList = document.getElementById('career-recommendations-list');
-                recommendationsList.innerHTML = '';
+                if (hollandPElem) {
+                    // Prioritize frontend simplified interpretation
+                    hollandPElem.innerHTML = frontendHollandInterpretation; // formatInsightText is not needed here as HTML is constructed
+                }
+                if (hollandTitleElem) {
+                     hollandTitleElem.innerHTML = `<div class=\"insight-icon\">🧩</div>霍兰德兴趣解读 (问卷分析)`;
+                }
+                // --- END: Holland Frontend Scoring & Display ---
                 
+                // Removed resumePElem and its population logic
+                
+                if(recommendationsList) {
+                recommendationsList.innerHTML = '';
                 if (data.recommendations && data.recommendations.length > 0) {
+                    // Sort recommendations by percentage, highest first
+                    data.recommendations.sort((a, b) => {
+                        // Helper to extract number from percentage string like "90%" or number like 90
+                        const getPercentageValue = (rec) => {
+                            let p = rec.percentage || rec.match_percentage;
+                            if (typeof p === 'string') {
+                                const numPart = parseFloat(p.replace('%', ''));
+                                return isNaN(numPart) ? 0 : numPart;
+                            }
+                            return typeof p === 'number' ? p : 0; // Default to 0 if undefined or wrong type
+                        };
+                        return getPercentageValue(b) - getPercentageValue(a); // Sort descending
+                    });
+
                     data.recommendations.forEach(rec => {
                     const div = document.createElement('div');
                     div.classList.add('career-recommendation');
-                        
-                        // 确保百分比格式正确 (xx%)
-                        let percentage = rec.percentage || rec.match_percentage;
-                        if (percentage) {
-                            if (typeof percentage === 'number') {
-                                percentage = percentage + '%';
+                        let percentageValue = rec.percentage || rec.match_percentage;
+                        let percentageDisplay = ""; // 初始化为空字符串
+
+                        if (percentageValue) {
+                            if (typeof percentageValue === 'number') {
+                                percentageDisplay = percentageValue + '%';
+                            } else if (typeof percentageValue === 'string') {
+                                // 尝试解析字符串，可能包含 '%'
+                                const numPart = parseFloat(percentageValue.replace('%', ''));
+                                if (!isNaN(numPart)) {
+                                    percentageDisplay = numPart + '%';
+                                }
+                                // 如果字符串不是有效数字或百分比，percentageDisplay 保持 ""
                             }
-                        } else {
-                            percentage = Math.floor(70 + Math.random() * 25) + '%';
                         }
+                        // 如果 percentageDisplay 仍为 "", 则不显示百分比部分
                         
                     div.innerHTML = `
-                            <h3>${rec.name} <span class="percentage">${percentage}</span></h3>
+                            <h3>${rec.name} ${percentageDisplay ? `<span class="percentage">${percentageDisplay}</span>` : ''}</h3>
                             <div class="short-desc">${rec.short_description || ''}</div>
                             <div class="reason">${rec.reason || ''}</div>
                         `;
-                        
-                        // 添加点击事件 - 使用与原代码相同的处理函数
                     div.addEventListener('click', () => handleCareerSelection(rec));
-                        
                     recommendationsList.appendChild(div);
                 });
                 } else {
                     recommendationsList.innerHTML = '<p>抱歉，暂时未能生成职业推荐。请检查输入或稍后再试。</p>';
                 }
             }
+            }
 
-            // 恢复原来的职业详情获取函数
             async function handleCareerSelection(career) {
-                detailedCareerName.textContent = career.name + " - 详细职业洞察";
-                detailedCareerContent.innerHTML = "<div class='detail-card'><p>正在加载详细信息...</p></div>";
+                if(detailedCareerName) detailedCareerName.textContent = career.name + " - 详细职业洞察";
+                if(detailedCareerContent) detailedCareerContent.innerHTML = "<div class='detail-card'><p>正在加载详细信息...</p></div>";
                 
-                // 从结果页面切换到详情页面
-                moduleResults.classList.add('hidden');
-                moduleDetailedInfo.classList.remove('hidden');
-                updateMainProgress(5); // 更新到第5步
+                if(moduleBasicInfo) moduleBasicInfo.classList.add('hidden');
+                if(moduleHollandQuestions) moduleHollandQuestions.classList.add('hidden');
+                if(moduleResults) moduleResults.classList.add('hidden');
+                if(moduleDetailedInfo) moduleDetailedInfo.classList.remove('hidden');
+                updateMainProgress(5); 
                 window.scrollTo(0, 0);
                 
-                // 显示加载动画
-                const loadingAnimation = showLoadingAnimation(`正在深入分析『${career.name}』职业详情...`, "AI正在生成更详细的职业洞察信息...");
+                const loadingAnimation = showLoadingAnimation('正在深入分析『' + career.name + '』职业详情...', "AI正在生成更详细的职业洞察信息...");
 
                 const cityVal = cityInput.value.trim();
                 const mbtiVal = mbtiInput.value.trim();
                 const resumeFile = resumeInput.files[0];
                 
-                // 准备发送的数据
                 const formData = new FormData();
                 formData.append('career_id', career.id || '');
                 formData.append('career_name', career.name);
                 formData.append('city', cityVal);
                 formData.append('mbti', mbtiVal);
-                
-                // 收集霍兰德答案
-                const hollandAnswers = {};
-                for (let i = 1; i <= 10; i++) {
-                    const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
-                    if (selectedOption) {
-                        hollandAnswers[`q${i}`] = selectedOption.value;
-                    }
-                }
                 formData.append('holland_answers', JSON.stringify(hollandAnswers));
-                
-                // 添加简历文件
-                if (resumeFile) {
-                    formData.append('resume', resumeFile);
-                }
+                if (resumeFile) formData.append('resume', resumeFile);
 
                 try {
                     const response = await fetch('http://47.110.41.233:5000/api/career-details', {
                         method: 'POST',
                         body: formData
                     });
-                    
-                    // 完成加载
                     loadingAnimation.completeLoading();
-                    
                     if (!response.ok) {
-                        throw new Error(`服务器返回错误: ${response.status}`);
+                        const errorData = await response.text();
+                        throw new Error('服务器返回错误: ' + response.status + ' - ' + errorData);
                     }
-                    
                     const details = await response.json();
-                    
-                    // 显示详细职业信息
                     displayDetailedInfo(details, cityVal);
-                    
                 } catch (error) {
-                    alert(`获取职业详情失败: ${error.message}`);
-                    detailedCareerContent.innerHTML = `<div class='detail-card'><p>获取详细信息失败，请稍后再试。</p></div>`;
+                    alert('获取职业详情失败: ' + error.message);
+                    if(detailedCareerContent) detailedCareerContent.innerHTML = '<div class=\'detail-card\'><p>获取详细信息失败，请稍后再试。</p></div>';
                 }
             }
             
-            // 恢复原来的详情显示函数
             function displayDetailedInfo(details, cityForDisplay) {
-                detailedCareerName.textContent = details.name + " - 详细职业洞察";
-                detailedCareerContent.innerHTML = `
-                    <div class="detail-card">
-                        <h4>💰 平均薪资参考 (${cityForDisplay})</h4>
-                        <p>${details.salary_info || '暂无薪资信息'}</p>
-                    </div>
-                    <div class="detail-card">
-                        <h4>🗺️ 发展规划蓝图</h4>
-                        ${details.development_plan || '暂无发展规划信息'}
-                    </div>
-                    <div class="detail-card">
-                        <h4>📚 推荐学习资源</h4>
-                        ${details.learning_resources || '暂无学习资源信息'}
-                    </div>
-                    <div class="detail-card">
-                        <h4>🛠️ 核心能力模型</h4>
-                        ${details.core_competencies || '暂无核心能力信息'}
-                    </div>
-                    <div class="detail-card">
-                        <h4>⏰ 日常工作一览</h4>
-                        ${details.daily_workflow || '暂无日常工作信息'}
-                    </div>
-                `;
+                // MODIFICATION_MARKER_SKELETON_V1
+                if(detailedCareerName) detailedCareerName.textContent = (details.name || "职业") + " - 详细职业洞察";
+                if(detailedCareerContent) {
+                    details = details || {}; 
+
+                    let salaryInfoHtml = '<p>' + (details.salary_info ? String(details.salary_info).replace(/\n|\\n/g, '<br>') : '暂无薪资信息') + '</p>';
+                    
+                    // --- Development Plan - Populate with real data ---
+                    let devPlanHtml = '<p>暂无发展规划信息</p>'; // Default message
+                    if (details.development_plan) {
+                        const planText = String(details.development_plan).replace(/\\\\n/g, '\n'); // Normalize newlines for splitting. Handles both \n and \\n from JSON
+                        const stagesRaw = planText.split(/\n\s*(?=5年规划|10年规划|15年\+规划|初级阶段|中级阶段|高级阶段|短期目标|中期目标|长期目标|第一阶段|第二阶段|第三阶段|\d{1,2}年经验)/i);
+                        
+                        if (stagesRaw.length > 1 && stagesRaw.some(s => s.trim() !== planText.trim())) {
+                            devPlanHtml = stagesRaw.map(stageText => stageText.trim())
+                                                .filter(stageText => stageText) 
+                                                .map(stageText => {
+                                                    const firstLineEnd = stageText.indexOf('\n');
+                                                    let firstLine = stageText.substring(0, firstLineEnd > 0 ? firstLineEnd : stageText.length);
+                                                    firstLine = firstLine.replace(/^(【|〖|「|『)|(】|〗|」|』)$/g, '').trim(); // Remove surrounding brackets
+                                                    const description = stageText.substring(firstLine.length).trim().replace(/^\n+|[:：\s]*\n/, '').replace(/\n/g, '<br>');
+                                                    
+                                                    if (/(规划|阶段|目标|经验)/.test(firstLine) && firstLine.length < 80 && !firstLine.includes('<') && description) { 
+                                                        return '<h5>' + firstLine.replace(/[:：]$/, '') + '</h5><p>' + description + '</p>';
+                                                    }
+                                                    // If firstLine is not a good title, or no description, treat whole block as paragraph
+                                                    return '<p>' + stageText.replace(/\n/g, '<br>') + '</p>';
+                                                }).join('');
+                        } else {
+                            devPlanHtml = '<p>' + planText.replace(/\n/g, '<br>') + '</p>';
+                        }
+                         if (!devPlanHtml.trim() || devPlanHtml.trim() === '<p></p>') { // Check if after processing, it's effectively empty
+                            devPlanHtml = '<p>暂无明确的发展阶段信息。</p>';
+                        }
+                    }
+                    // --- End Development Plan ---
+                    
+                    let learningResourcesHtml = '<div><p>' + (details.learning_resources ? String(details.learning_resources).replace(/\n|\\n/g, '<br>') : '暂无学习资源信息') + '</p></div>';
+                    
+                    let hardSkillsContent = details.hard_skills ? String(details.hard_skills).replace(/\n|\\n/g, '<br>') : '暂无硬技能信息';
+                    let softSkillsContent = details.soft_skills ? String(details.soft_skills).replace(/\n|\\n/g, '<br>') : '暂无软技能信息';
+                    let mbtiAdvantageContent = details.mbti_advantage ? String(details.mbti_advantage).replace(/\n|\\n/g, '<br>') : '暂无MBTI优势分析信息';
+                    
+                    let coreCompetenciesFallbackHtml = '';
+                    if (!details.hard_skills && !details.soft_skills && !details.mbti_advantage && details.core_competencies) {
+                        coreCompetenciesFallbackHtml = '<div class="sub-module"><h5 style="color: #555;">综合核心能力 (后备)</h5><div><p>' + String(details.core_competencies).replace(/\n|\\n/g, '<br>') + '</p></div></div>';
+                    } 
+
+                    // --- START: 动态生成"日常工作一览"表格内容 ---
+                    let dailyWorkflowTableRowsHtml = '';
+                    // 优先尝试从 details.daily_workflow 获取，其次是 details['日常工作一览'] (可能由AI直接返回)，
+                    // 再次是 details.insights['日常工作一览'] (如果insights对象存在)，最后是默认文本。
+                    // 这是为了兼容后端可能通过不同字段名提供日常工作描述文本。
+                    const dailyWorkText = details.daily_workflow || details['日常工作一览'] || (details.insights && details.insights['日常工作一览']) || "暂无相关信息";
+
+                    // 预处理文本：统一换行符，按换行符分割成任务，去除首尾空格并过滤空行
+                    const tasks = dailyWorkText.replace(/\\r\\n|\\r/g, '\\n').split('\\n').map(task => task.trim()).filter(task => task !== '');
+
+                    if (tasks.length === 0 || (tasks.length === 1 && tasks[0] === "暂无相关信息")) {
+                        // 如果没有任务或只有默认的"暂无信息"，则显示合并单元格的提示
+                        dailyWorkflowTableRowsHtml = '<tr><td colspan="2">暂无相关信息</td></tr>';
+                    } else {
+                        // 定义时间段及其大致可容纳的任务数量
+                        const timeSlotsDefinition = [ 
+                            { slot: "09:00 - 10:00", tasks: [], capacity: 1 },
+                            { slot: "10:00 - 12:00", tasks: [], capacity: 2 },
+                            { slot: "13:00 - 15:00", tasks: [], capacity: 2 },
+                            { slot: "15:00 - 17:00", tasks: [], capacity: 2 },
+                            { slot: "其他/弹性时间", tasks: [], capacity: 10 } // "其他"时间段可以容纳更多任务
+                        ];
+
+                        let taskIndex = 0;
+                        // 将任务分配到预设的时间段，同时考虑每个时间段的容量
+                        for (let i = 0; i < timeSlotsDefinition.length && taskIndex < tasks.length; i++) {
+                            let slot = timeSlotsDefinition[i];
+                            for (let j = 0; j < slot.capacity && taskIndex < tasks.length; j++) {
+                                slot.tasks.push(tasks[taskIndex]);
+                                taskIndex++;
+                            }
+                        }
+                        // 如果在分配完预设容量后仍有剩余任务，则将它们全部放入最后一个"其他/弹性时间"段
+                        while(taskIndex < tasks.length) {
+                            timeSlotsDefinition[timeSlotsDefinition.length - 1].tasks.push(tasks[taskIndex]);
+                            taskIndex++;
+                        }
+
+                        let contentGenerated = false; // 标记是否成功生成了至少一行有效内容
+                        timeSlotsDefinition.forEach(slotInfo => {
+                            if (slotInfo.tasks.length > 0) {
+                                // 同一时间段内的多个任务用 <br> 分隔显示
+                                dailyWorkflowTableRowsHtml += `<tr><td>${slotInfo.slot}</td><td>${slotInfo.tasks.join('<br>')}</td></tr>`;
+                                contentGenerated = true;
+                            }
+                        });
+                        
+                        if (!contentGenerated) { 
+                            // 如果处理后依然没有可显示的任务内容（例如，原始文本只包含空行或被过滤掉的字符）
+                             dailyWorkflowTableRowsHtml = '<tr><td colspan="2">未能有效解析日常工作内容或无具体任务项。</td></tr>';
+                        }
+                    }
+                    // --- END: 动态生成"日常工作一览"表格内容 ---
+
+                    let html = ''; // 重新初始化html字符串变量
+                    html += '<div class="detail-card">';
+                    html += '    <h4>💰 平均薪资参考 (' + (cityForDisplay || '当前城市') + ')</h4>';
+                    html +=      salaryInfoHtml;
+                    html += '</div>';
+                    
+                    html += '<div class="detail-card">';
+                    html += '    <h4>🗺️ 发展规划蓝图</h4>';
+                    html += '    <div id="development-plan-content">' + devPlanHtml + '</div>';
+                    html += '</div>';
+
+                    html += '<div class="detail-card">';
+                    html += '    <h4>📚 推荐学习资源</h4>';
+                    html +=      learningResourcesHtml;
+                    html += '</div>';
+
+                    html += '<div class="detail-card" id="core-competencies-card">';
+                    html += '    <h4>🛠️ 核心能力模型</h4>';
+                    html += '    <div class="sub-module">';
+                    html += '        <h5>硬技能 (Hard Skills)</h5>';
+                    html += '        <div id="hard-skills-content"><p>' + hardSkillsContent + '</p></div>';
+                    html += '    </div>';
+                    html += '    <div class="sub-module">';
+                    html += '        <h5>软技能 (Soft Skills)</h5>';
+                    html += '        <div id="soft-skills-content"><p>' + softSkillsContent + '</p></div>';
+                    html += '    </div>';
+                    html += '    <div class="sub-module">';
+                    html += '        <h5>MBTI优势发挥 (Leveraging MBTI Strengths)</h5>';
+                    html += '        <div id="mbti-advantage-content"><p>' + mbtiAdvantageContent + '</p></div>';
+                    html += '    </div>';
+                    html +=      coreCompetenciesFallbackHtml; 
+                    html += '</div>';
+
+                    html += '<div class="detail-card">';
+                    html += '    <h4>⏰ 日常工作一览</h4>';
+                    html += '    <table id="daily-workflow-table" class="workflow-table">';
+                    html += '        <thead><tr><th>时间</th><th>活动内容</th></tr></thead>';
+                    html += '        <tbody>' + dailyWorkflowTableRowsHtml + '</tbody>';
+                    html += '    </table>';
+                    html += '</div>';
+
+                    detailedCareerContent.innerHTML = html;
+                }
             }
             
-            // 确保界面切换函数正确
             function showResultsPage() {
-                moduleHollandQuestions.classList.add('hidden');
-                moduleResults.classList.remove('hidden');
-                moduleDetailedInfo.classList.add('hidden');
+                if(moduleBasicInfo) moduleBasicInfo.classList.add('hidden'); // Hide basic info
+                if(moduleHollandQuestions) moduleHollandQuestions.classList.add('hidden');
+                if(moduleResults) moduleResults.classList.remove('hidden');
+                if(moduleDetailedInfo) moduleDetailedInfo.classList.add('hidden');
                 updateMainProgress(4);
                 window.scrollTo(0, 0);
             }
             
             function showRecommendationsView() {
-                moduleDetailedInfo.classList.add('hidden');
-                moduleResults.classList.remove('hidden');
+                if(moduleBasicInfo) moduleBasicInfo.classList.add('hidden'); // Hide basic info
+                if(moduleDetailedInfo) moduleDetailedInfo.classList.add('hidden');
+                if(moduleResults) moduleResults.classList.remove('hidden');
                 updateMainProgress(4); 
                 window.scrollTo(0, 0);
             }
 
-            // 辅助函数：格式化解读文本以美化显示
-            function formatInsightText(text) {
-                // 将文本中的关键词加粗并添加颜色
-                const keywordsToHighlight = [
-                    '适合', '优势', '强项', '特长', '建议', '推荐', 
-                    '性格特点', '特质', '能力', '专长', '技能', '倾向',
-                    '兴趣', '方向', '发展', '职业路径'
-                ];
-                
-                let formattedText = text;
-                
-                // 如果文本太长，添加段落分隔
-                if (text.length > 100) {
-                    formattedText = text.replace(/([。！？：；\.\!\?:;])\s*/g, '$1<br><br>');
-                }
-                
-                // 高亮关键词
-                keywordsToHighlight.forEach(keyword => {
-                    const regex = new RegExp(`(${keyword})`, 'g');
-                    formattedText = formattedText.replace(regex, '<strong style="color: #3B82F6;">$1</strong>');
-                });
-                
-                return formattedText;
+            if (moduleHollandQuestions) showHollandQuestion(currentHollandQuestion);
+            initializePage();
+
+            function startAssistant() {
+                if(newLandingPageContent) newLandingPageContent.classList.add('hidden');
+                if(appContentWrapper) appContentWrapper.classList.remove('hidden');
+                if (progressContainer) progressContainer.classList.remove('hidden');
+                if (moduleBasicInfo) moduleBasicInfo.classList.remove('hidden');
+                if (navbar) navbar.classList.add('hidden'); // Hide navbar when assistant starts
+                updateMainProgress(1); 
+                window.scrollTo(0, 0);
             }
 
-            // Initialize the first Holland question view
-            showHollandQuestion(currentHollandQuestion);
+            if (startButtonNav) {
+                startButtonNav.addEventListener('click', startAssistant);
+            }
+            if (startButtonHero) {
+                startButtonHero.addEventListener('click', startAssistant);
+            }
+            if (startButtonCta) {
+                startButtonCta.addEventListener('click', startAssistant);
+            }
         });
     </script>
 </body>

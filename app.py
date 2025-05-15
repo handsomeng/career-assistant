@@ -435,15 +435,21 @@ def get_career_details():
     system_message = {
         "role": "system",
         "content": """你是专业的职业规划分析师，现在需要针对用户选择的特定职业提供详细分析。
-根据用户的背景（MBTI、霍兰德测试、简历）以及所选职业，请以JSON格式返回以下详细内容：
-1. name: 职业名称
-2. salary_info: 该职业在用户所在城市的薪资范围和影响因素
-3. development_plan: 该职业的发展路径和晋升规划，以HTML格式呈现，可使用<ul><li>等标签
-4. learning_resources: 进入和提升该职业所需的学习资源和证书，以HTML格式呈现
-5. core_competencies: 该职业所需的核心能力和素质，以HTML格式呈现
-6. daily_workflow: 该职业的日常工作内容和节奏，以HTML格式呈现
+根据用户的背景（MBTI、霍兰德测试、简历）以及所选职业，请以JSON格式返回以下详细内容。确保所有字段都包含具体且有用的信息。
 
-确保JSON格式有效，不要使用markdown代码块(如```json)。"""
+返回的JSON对象应包含以下顶级键，且**仅包含这些键**：
+1.  `name`: (string) 职业名称。
+2.  `salary_info`: (string) 该职业在用户所在城市的典型薪资范围、可能的变动因素（如经验、公司规模等）。
+3.  `development_plan`: (string) 该职业的详细发展路径和晋升规划。请将其描述为分阶段的计划（例如：短期1-2年，中期3-5年，长期5年以上的目标、学习和成就）。使用清晰的段落或列表呈现每个阶段。
+4.  `learning_resources`: (string) 进入和提升该职业所需的学习资源、推荐课程、在线平台、重要书籍以及建议考取的专业证书。
+5.  `hard_skills`: (string) 从事该职业所需的具体硬技能列表或详细描述（例如：编程语言、软件工具、专业知识领域）。**此字段必须提供。**
+6.  `soft_skills`: (string) 从事该职业所需的关键软技能列表或详细描述（例如：沟通能力、团队合作、解决问题、领导力）。**此字段必须提供。**
+7.  `mbti_advantage`: (string) 结合用户提供的MBTI类型，分析该性格类型在该职业中的主要优势以及如何有效发挥这些优势的具体建议。**此字段必须提供。**
+8.  `daily_workflow`: (string) 该职业典型的一天或一周工作内容。请以任务列表的形式描述（例如，用换行符分隔每个任务或活动），以便前端可以解析为日程表。
+
+**重要：不要返回名为 `core_competencies` 的字段。核心能力必须分解到上述的 `hard_skills`、`soft_skills` 和 `mbti_advantage` 三个独立字段中。**
+
+确保返回的JSON格式有效且可以直接使用，不要包含任何markdown代码块 (如\`\`\`json)。所有文本内容应该是中文。"""
     }
     
     user_message = {
@@ -498,7 +504,9 @@ def get_career_details():
                 "salary_info": "无法获取薪资信息",
                 "development_plan": "<p>获取职业发展路径信息失败</p>",
                 "learning_resources": "<p>获取学习资源信息失败</p>",
-                "core_competencies": "<p>获取核心能力信息失败</p>",
+                "hard_skills": "<p>获取硬技能信息失败</p>",
+                "soft_skills": "<p>获取软技能信息失败</p>",
+                "mbti_advantage": "<p>获取MBTI优势分析失败</p>",
                 "daily_workflow": "<p>获取日常工作流程信息失败</p>"
             })
             
@@ -510,7 +518,9 @@ def get_career_details():
             "salary_info": "调用AI分析时出错",
             "development_plan": f"<p>错误: {str(e)}</p>",
             "learning_resources": "<p>请稍后再试</p>",
-            "core_competencies": "<p>请稍后再试</p>",
+            "hard_skills": "<p>请稍后再试</p>",
+            "soft_skills": "<p>请稍后再试</p>",
+            "mbti_advantage": "<p>请稍后再试</p>",
             "daily_workflow": "<p>请稍后再试</p>"
         })
 
