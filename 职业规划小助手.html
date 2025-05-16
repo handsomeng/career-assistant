@@ -1485,10 +1485,23 @@
                     <h3><div class="insight-icon">🧩</div>霍兰德兴趣解读 (问卷分析)</h3>
                     <p>加载中...</p>
                 </div>
+
+                <div class="insight-card" id="resume-insight">
+                    <h3><div class="insight-icon">📄</div>简历亮点与能力分析</h3>
+                    <p>如果您上传了简历，AI将在此分析您的技能与经验。</p>
+                </div>
             </div>
             
-            <h3 style="margin-top: 30px; margin-bottom: 20px; color: var(--text-color);">最匹配职业推荐 (Top 5)</h3>
-            <div id="career-recommendations-list">
+            <h3 style="margin-top: 30px; margin-bottom: 15px; color: var(--text-color);">初步职业推荐 (基于MBTI与霍兰德)</h3>
+            <div id="career-recommendations-mbti-holland">
+                <!-- MBTI + Holland recommendations will be populated here -->
+                <p>正在等待初步分析结果...</p>
+            </div>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px; color: var(--text-color);">深入职业推荐 (结合简历分析)</h3>
+            <div id="career-recommendations-full">
+                <!-- MBTI + Holland + Resume recommendations will be populated here -->
+                <p>如果您上传了简历，AI将在此提供更全面的推荐。</p>
             </div>
         </div>
 
@@ -1546,6 +1559,11 @@
             const resumeInput = document.getElementById('resume');
             const mbtiInput = document.getElementById('mbti');
             const cityInput = document.getElementById('city');
+
+            // New elements for staged recommendations
+            const preliminaryRecommendationsList = document.getElementById('career-recommendations-mbti-holland');
+            const fullRecommendationsList = document.getElementById('career-recommendations-full');
+            const resumeInsightCard = document.getElementById('resume-insight'); // For resume text
 
             const numTotalHollandQuestions = 10;
             let currentHollandQuestion = 1;
@@ -1830,7 +1848,7 @@
                 const loadingSubtextElement = document.getElementById('loading-subtext');
                 const loadingProgressBarElement = document.getElementById('loading-progress-bar');
                 
-                if(!loadingElement || !loadingTextElement || !loadingSubtextElement || !loadingProgressBarElement) return { completeLoading: () => {} };
+                if(!loadingElement || !loadingTextElement || !loadingSubtextElement || !loadingProgressBarElement) return { completeLoading: () => {}, setLoadingText: () => {} };
 
                 loadingTextElement.textContent = message;
                 loadingSubtextElement.textContent = subtext;
@@ -1838,7 +1856,8 @@
                 loadingElement.classList.remove('hidden');
                 
                 let progress = 0;
-                const totalTime = 20000; 
+                // Adjust totalTime based on expected duration for each stage
+                const totalTime = message.includes("初步分析中") ? 8000 : (message.includes("深入分析中") ? 12000 : 5000);
                 const interval = 200; 
                 const increment = (interval / totalTime) * 100;
                 
@@ -1847,16 +1866,20 @@
                     if (progress < 70) progress += Math.random() * 0.5;
                     else if (progress < 90) progress += Math.random() * 0.2;
                     if (progress > 99) progress = 99;
-                    loadingProgressBarElement.style.width = `${progress}%`;
+                    if(loadingProgressBarElement) loadingProgressBarElement.style.width = `${progress}%`;
                 }, interval);
                 
                 return {
                     completeLoading: () => {
                         clearInterval(progressIntervalId);
-                        loadingProgressBarElement.style.width = '100%';
+                        if(loadingProgressBarElement) loadingProgressBarElement.style.width = '100%';
                         setTimeout(() => {
-                            loadingElement.classList.add('hidden');
+                            if(loadingElement) loadingElement.classList.add('hidden');
                         }, 500);
+                    },
+                    setLoadingText: (newMessage, newSubtext) => {
+                        if(loadingTextElement) loadingTextElement.textContent = newMessage;
+                        if(loadingSubtextElement) loadingSubtextElement.textContent = newSubtext;
                     }
                 };
             }
@@ -1871,111 +1894,121 @@
                     analyzeButton.textContent = "分析中...";
                 }
                 
-                const formData = new FormData();
-                formData.append('mbti', mbti);
-                formData.append('city', city);
-                
-                formData.append('holland_answers', JSON.stringify(hollandAnswers));
-                
-                if (resumeFile) {
-                    formData.append('resume', resumeFile);
-                }
-                
+                let loadingAnimationHandler;
+                updateMainProgress(3); // Set overall progress to AI Analysis stage
+
                 try {
-                    const loadingAnimation = showLoadingAnimation("AI职业分析中...", "正在深度分析您的MBTI类型、兴趣特质和简历内容，生成个性化职业推荐...");
-                    updateMainProgress(3);
+                    // Stage 1: Preliminary Analysis (MBTI + Holland)
+                    const preliminaryFormData = new FormData();
+                    preliminaryFormData.append('mbti', mbti);
+                    preliminaryFormData.append('city', city);
+                    preliminaryFormData.append('holland_answers', JSON.stringify(hollandAnswers));
+
+                    loadingAnimationHandler = showLoadingAnimation("AI初步分析中...", "正在分析您的MBTI与霍兰德兴趣类型，请稍候...");
                     
-                    const response = await fetch('http://47.110.41.233:5000/api/analyze', { 
+                    const preliminaryResponse = await fetch('http://47.110.41.233:5000/api/analyze-preliminary', { 
                         method: 'POST',
-                        body: formData,
+                        body: preliminaryFormData,
                     });
                     
-                    loadingAnimation.completeLoading();
-                    
-                    if (!response.ok) {
-                        const errorData = await response.text();
-                        throw new Error(`服务器返回错误: ${response.status} - ${errorData}`);
+                    if (!preliminaryResponse.ok) {
+                        const errorData = await preliminaryResponse.text();
+                        throw new Error(`初步分析服务器返回错误: ${preliminaryResponse.status} - ${errorData}`);
                     }
                     
-                    const data = await response.json();
-                    updateMainProgress(4);
-                    displayInsightsAndRecommendations(data);
-                    showResultsPage();
+                    const preliminaryData = await preliminaryResponse.json();
+                    // No need to complete loading here, it will be completed after stage 2 or if no resume
                     
+                    // Display preliminary insights (MBTI and Holland from frontend, recommendations from backend)
+                    displayInsightsAndRecommendations(preliminaryData, "preliminary");
+                    showResultsPage(); // Show results page with preliminary data
+
+                    // Stage 2: Full Analysis (if resume is provided)
+                    if (resumeFile) {
+                        if (loadingAnimationHandler) loadingAnimationHandler.setLoadingText("AI深入分析中...", "正在结合您的简历进行分析，请稍候...");
+                        else loadingAnimationHandler = showLoadingAnimation("AI深入分析中...", "正在结合您的简历进行分析，请稍候...");
+
+                        const fullFormData = new FormData();
+                        fullFormData.append('mbti', mbti);
+                        fullFormData.append('city', city);
+                        fullFormData.append('holland_answers', JSON.stringify(hollandAnswers));
+                        fullFormData.append('resume', resumeFile);
+
+                        const fullResponse = await fetch('http://47.110.41.233:5000/api/analyze-full', { 
+                            method: 'POST',
+                            body: fullFormData,
+                        });
+
+                        if (!fullResponse.ok) {
+                            const errorData = await fullResponse.text();
+                            throw new Error(`深入分析服务器返回错误: ${fullResponse.status} - ${errorData}`);
+                        }
+
+                        const fullData = await fullResponse.json();
+                        if(loadingAnimationHandler) loadingAnimationHandler.completeLoading();
+                        displayInsightsAndRecommendations(fullData, "full"); 
+                    } else {
+                        if(loadingAnimationHandler) loadingAnimationHandler.completeLoading(); // Complete if no resume for stage 2
+                        if(fullRecommendationsList) fullRecommendationsList.innerHTML = '<p>未上传简历，深入推荐部分将基于MBTI和霍兰德提供补充或重复初步结果。</p>';
+                        if(resumeInsightCard) {
+                            const pElem = resumeInsightCard.querySelector('p');
+                            if (pElem) pElem.textContent = '未上传简历，无法进行简历分析。';
+                        }
+                        // If no resume, make a simulated slight delay before showing full section as complete
+                        // This is a UX choice to show that the process considered a second step even if no resume
+                        // For example, call displayInsightsAndRecommendations with preliminaryData again for the full section
+                        // displayInsightsAndRecommendations(preliminaryData, "full"); 
+                        // Or simply leave the fullRecsList message as set above.
+                    }
+                    updateMainProgress(4); // Final progress update to Career Insights
+
                 } catch (error) {
+                    if(loadingAnimationHandler && typeof loadingAnimationHandler.completeLoading === 'function') {
+                         loadingAnimationHandler.completeLoading();
+                    }
                     alert(`分析错误: ${error.message}`);
+                    // Reset button state
                     if(analyzeButton){
                         analyzeButton.disabled = false;
                         analyzeButton.textContent = "完成并分析";
                     }
+                    // Potentially reset view to an earlier stage
+                    // initializePage(); 
                 }
             }
 
-            function parseInsightText(insightText) {
-                // This function will now primarily focus on Holland and Resume,
-                // as MBTI will be handled separately by displayInsightsAndRecommendations.
-                // However, we keep its structure in case backend provides some useful text for Holland/Resume.
-
+            function parseInsightText(insightText, analysisStage = "preliminary") {
+                let mbtiContent = ""; 
                 let hollandContent = "";
                 let resumeContent = "";
 
                 const defaultMessages = {
-                    // MBTI default is not strictly needed here anymore if handled by standardized content
-                    holland: "AI未能提供明确的霍兰德兴趣解读。请检查输入信息或稍后再试。"
-                    // Removed resume default message
+                    holland: "AI未能提供明确的霍兰德兴趣解读或服务器未返回相关信息。",
+                    resume: "AI未能提供明确的简历分析或服务器未返回相关信息。如果您已上传简历，请检查服务器响应。"
                 };
                 
-                // If the entire insightText is empty, an error, or a "cannot provide" message for Holland/Resume
-                if (!insightText || typeof insightText !== 'string' || insightText.trim() === "" || 
-                    (insightText.toLowerCase().includes("无法") && !insightText.toLowerCase().includes("mbti")) || // Avoid triggering if it's just an MBTI error msg
-                    (insightText.toLowerCase().includes("error") && !insightText.toLowerCase().includes("mbti")) ) {
-                    return { holland: defaultMessages.holland, resume: "", mbti: "" }; // Return empty resume
+                // If insightText is an object (preferred from backend)
+                if (typeof insightText === 'object' && insightText !== null) {
+                    hollandContent = insightText.holland_insight || "";
+                    resumeContent = insightText.resume_insight || "";
+                    // mbtiContent = insightText.mbti_insight || ""; // If backend also provides MBTI text
                 }
-
-                // Keywords are still useful for trying to split backend text if it's monolithic
-                const hollandKeywords = ["holland", "霍兰德", "riasec", "兴趣类型", "职业兴趣", "现实型", "研究型", "艺术型", "社会型", "企业型", "常规型"];
-                // Removed resumeKeywords
-                // MBTI keywords can be used to *exclude* text from being wrongly assigned to Holland/Resume
-                const mbtiKeywords = ["mbti", "人格", "性格", "istj", "isfj", "infj", "intj", "istp", "isfp", "infp", "intp", "estp", "esfp", "enfp", "entp", "estj", "esfj", "enfj", "entj"];
-
-
-                const sections = insightText.split(/\\n\\s*\\n|\\n-\\s*\\n|### |---/).map(s => s.trim()).filter(s => s.length > 0);
-                let assignedToHolland = false;
-                // Removed assignedToResume
-
-                sections.forEach((section) => {
-                    const lowerSection = section.toLowerCase();
-                    // Ensure the section is not primarily about MBTI before assigning to Holland or Resume
-                    if (mbtiKeywords.some(kw => lowerSection.includes(kw))) {
-                        return; // Skip MBTI-related sections
+                // If insightText is a string (fallback, less ideal)
+                else if (typeof insightText === 'string' && insightText.trim() !== "") {
+                    if (analysisStage === "preliminary") {
+                        // Assume string insightText from preliminary might be Holland or a general mix
+                        hollandContent = insightText;
+                    } else if (analysisStage === "full") {
+                        // Assume string insightText from full is primarily resume or a more detailed mix
+                        resumeContent = insightText; 
+                        // Potentially, try to parse Holland from it too if mixed, but complex
                     }
-
-                    if (!assignedToHolland && hollandKeywords.some(kw => lowerSection.includes(kw))) {
-                        hollandContent += (hollandContent ? "\\n\\n" : "") + section;
-                        assignedToHolland = true; 
-                    } 
-                    // Removed else if for resumeKeywords
-                    // Logic for unassigned sections can remain or be simplified further if only Holland is expected
-                });
-                
-                // Fallback if no clear sections found but the text seems specific
-                if (sections.length === 1 && !assignedToHolland && !mbtiKeywords.some(kw => sections[0].toLowerCase().includes(kw))) {
-                    const singleSectionLower = sections[0].toLowerCase();
-                     if (hollandKeywords.some(kw => singleSectionLower.includes(kw))) hollandContent = sections[0];
-                     // Removed else if for resumeKeywords 
                 }
 
-
-                if (!hollandContent || hollandContent.length < 20 || hollandContent.toLowerCase().includes("无法") || hollandContent.toLowerCase().includes("未能")) {
-                    hollandContent = defaultMessages.holland;
-                }
-                // Removed check for resumeContent and setting its default
-                
                 return {
-                    // MBTI content is now primarily handled by the new logic in displayInsightsAndRecommendations
-                    mbti: "", // Effectively, parseInsightText no longer provides MBTI content
-                    holland: hollandContent.trim(),
-                    resume: "" // Always return empty string for resume
+                    mbti: mbtiContent, 
+                    holland: hollandContent.trim() || (analysisStage === "preliminary" || analysisStage === "full" ? defaultMessages.holland : ""),
+                    resume: resumeContent.trim() || (analysisStage === "full" ? defaultMessages.resume : "")
                 };
             }
             
@@ -1989,11 +2022,11 @@
                 return formattedText;
             }
 
-            function displayInsightsAndRecommendations(data) {
-                // Handle MBTI using standardized content
+            function displayInsightsAndRecommendations(data, analysisStage = "preliminary") {
+                // Handle MBTI using standardized content (always available)
                 const mbtiType = mbtiInput.value.trim().toUpperCase();
                 const mbtiPElem = document.querySelector('#mbti-insight p');
-                const mbtiTitleElem = document.querySelector('#mbti-insight h3'); // Assuming h3 contains the title + icon
+                const mbtiTitleElem = document.querySelector('#mbti-insight h3');
 
                 if (mbtiData[mbtiType] && mbtiPElem && mbtiTitleElem) {
                     const typeInfo = mbtiData[mbtiType];
@@ -2012,11 +2045,12 @@
                      if (mbtiTitleElem) mbtiTitleElem.innerHTML = `<div class="insight-icon">👤</div>MBTI 人格解读`;
                 }
 
-                // Attempt to parse Holland & Resume from backend response (if any useful text)
-                // `parseInsightText` will now return an object like { mbti: "", holland: "...", resume: "..." }
-                const parsedBackendInsights = data.insight ? parseInsightText(data.insight) : { holland: "", resume: "", mbti: ""};
+                // Parse backend insights if provided
+                // `data.insight` from backend could be a string or an object like { holland_insight: "...", resume_insight: "..." }
+                const parsedBackendInsights = data.insight ? parseInsightText(data.insight, analysisStage) 
+                                                            : parseInsightText("", analysisStage); // Provide default empty strings if no insight
 
-                // --- START: Holland Frontend Scoring & Display ---
+                // --- START: Holland Frontend Scoring & Display (Primarily from questionnaire) ---
                 const hollandPElem = document.querySelector('#holland-insight p');
                 const hollandTitleElem = document.querySelector('#holland-insight h3');
                 let frontendHollandInterpretation = "";
@@ -2028,13 +2062,9 @@
                             scores[hollandAnswers[q]]++;
                         }
                     }
-
                     const sortedScores = Object.entries(scores).sort(([,a],[,b]) => b-a);
-                    
                     frontendHollandInterpretation = "<strong>根据您的问卷回答，您的主要职业兴趣类型可能为：</strong><br>";
                     let topTypesInfo = [];
-
-                    // Display top 1-3 types, ensuring they have a score > 0
                     for (let i = 0; i < Math.min(sortedScores.length, 3); i++) {
                         const typeCode = sortedScores[i][0];
                         const score = sortedScores[i][1];
@@ -2043,80 +2073,112 @@
                             topTypesInfo.push(
                                 `<strong>${i+1}. ${typeData.name} (得分: ${score})</strong>: ${typeData.description}<br><em>参考领域: ${typeData.careers.join(', ')}</em>`
                             );
-                        } else if (i === 0) { // If even the top score is 0, means no valid answers or issue
-                             break; // Stop if the highest score is 0
-                        }
+                        } else if (i === 0) { break; }
                     }
                     if (topTypesInfo.length > 0) {
                         frontendHollandInterpretation += topTypesInfo.join("<br><br>");
                     } else {
                          frontendHollandInterpretation = "未能根据您的问卷回答计算出明确的霍兰德兴趣类型。请确保已完整回答问卷。";
                     }
-
                 } else {
                     frontendHollandInterpretation = "请先完成霍兰德职业兴趣问卷，以获取您的兴趣类型分析。";
                 }
                 
                 if (hollandPElem) {
-                    // Prioritize frontend simplified interpretation
-                    hollandPElem.innerHTML = frontendHollandInterpretation; // formatInsightText is not needed here as HTML is constructed
+                    // Frontend interpretation is primary for Holland card.
+                    // If backend provides a specific Holland insight, you could append it:
+                    let combinedHollandText = frontendHollandInterpretation;
+                    if (parsedBackendInsights.holland && parsedBackendInsights.holland !== parseInsightText("", analysisStage).holland) {
+                         combinedHollandText += "<br><br><strong>AI补充分析 (霍兰德):</strong><br>" + formatInsightText(parsedBackendInsights.holland);
+                    }
+                    hollandPElem.innerHTML = combinedHollandText;
                 }
                 if (hollandTitleElem) {
                      hollandTitleElem.innerHTML = `<div class=\"insight-icon\">🧩</div>霍兰德兴趣解读 (问卷分析)`;
                 }
                 // --- END: Holland Frontend Scoring & Display ---
-                
-                // Removed resumePElem and its population logic
-                
-                if(recommendationsList) {
-                recommendationsList.innerHTML = '';
-                if (data.recommendations && data.recommendations.length > 0) {
-                    // Sort recommendations by percentage, highest first
-                    data.recommendations.sort((a, b) => {
-                        // Helper to extract number from percentage string like "90%" or number like 90
-                        const getPercentageValue = (rec) => {
-                            let p = rec.percentage || rec.match_percentage;
-                            if (typeof p === 'string') {
-                                const numPart = parseFloat(p.replace('%', ''));
-                                return isNaN(numPart) ? 0 : numPart;
-                            }
-                            return typeof p === 'number' ? p : 0; // Default to 0 if undefined or wrong type
-                        };
-                        return getPercentageValue(b) - getPercentageValue(a); // Sort descending
-                    });
 
-                    data.recommendations.forEach(rec => {
-                    const div = document.createElement('div');
-                    div.classList.add('career-recommendation');
-                        let percentageValue = rec.percentage || rec.match_percentage;
-                        let percentageDisplay = ""; // 初始化为空字符串
-
-                        if (percentageValue) {
-                            if (typeof percentageValue === 'number') {
-                                percentageDisplay = percentageValue + '%';
-                            } else if (typeof percentageValue === 'string') {
-                                // 尝试解析字符串，可能包含 '%'
-                                const numPart = parseFloat(percentageValue.replace('%', ''));
-                                if (!isNaN(numPart)) {
-                                    percentageDisplay = numPart + '%';
-                                }
-                                // 如果字符串不是有效数字或百分比，percentageDisplay 保持 ""
-                            }
+                // --- START: Resume Insight Display (only for 'full' stage and if data exists) ---
+                if (analysisStage === "full" && resumeInsightCard) {
+                    const resumePElem = resumeInsightCard.querySelector('p');
+                    const resumeTitleElem = resumeInsightCard.querySelector('h3'); 
+                    if(resumePElem && resumeTitleElem){
+                        if (parsedBackendInsights.resume && parsedBackendInsights.resume !== parseInsightText("", "full").resume) {
+                            resumePElem.innerHTML = formatInsightText(parsedBackendInsights.resume);
+                        } else if (resumeInput.files[0]) {
+                            resumePElem.textContent = '简历已提交分析，AI正在处理或未能提取有效信息。若长时间未更新，请检查服务器日志。';
+                        } else {
+                            resumePElem.textContent = '未上传简历，无法进行简历分析。';
                         }
-                        // 如果 percentageDisplay 仍为 "", 则不显示百分比部分
-                        
-                    div.innerHTML = `
-                            <h3>${rec.name} ${percentageDisplay ? `<span class="percentage">${percentageDisplay}</span>` : ''}</h3>
-                            <div class="short-desc">${rec.short_description || ''}</div>
-                            <div class="reason">${rec.reason || ''}</div>
-                        `;
-                    div.addEventListener('click', () => handleCareerSelection(rec));
-                    recommendationsList.appendChild(div);
-                });
-                } else {
-                    recommendationsList.innerHTML = '<p>抱歉，暂时未能生成职业推荐。请检查输入或稍后再试。</p>';
+                    }
                 }
-            }
+                // --- END: Resume Insight Display ---
+                
+                // Determine which recommendation list to populate
+                let targetRecommendationsList;
+                let messageForOtherList = "";
+
+                if (analysisStage === "preliminary") {
+                    targetRecommendationsList = preliminaryRecommendationsList;
+                    if(fullRecommendationsList) fullRecommendationsList.innerHTML = '<p>正在等待结合简历的深入分析...</p>'; // Update message for full list
+                } else if (analysisStage === "full") {
+                    targetRecommendationsList = fullRecommendationsList;
+                    if(preliminaryRecommendationsList) {
+                         // Decide how to handle preliminary list once full results are in
+                         // Option 1: Hide it or clear it
+                         // preliminaryRecommendationsList.classList.add('hidden');
+                         // preliminaryRecommendationsList.innerHTML = '';
+                         // Option 2: Update its message
+                         preliminaryRecommendationsList.innerHTML = '<p>初步推荐已处理。请参考下方结合简历的深入推荐，或上方初步推荐（若内容不同）。</p>';
+                    }
+                } else {
+                    // Should not happen with current logic
+                    console.error("Unknown analysis stage for recommendations: ", analysisStage);
+                    return; 
+                }
+
+                if(targetRecommendationsList) {
+                    targetRecommendationsList.innerHTML = ''; // Clear previous content (e.g., "Loading...")
+                    if (data.recommendations && data.recommendations.length > 0) {
+                        data.recommendations.sort((a, b) => {
+                            const getPercentageValue = (rec) => {
+                                let p = rec.percentage || rec.match_percentage;
+                                if (typeof p === 'string') {
+                                    const numPart = parseFloat(p.replace('%', ''));
+                                    return isNaN(numPart) ? 0 : numPart;
+                                }
+                                return typeof p === 'number' ? p : 0;
+                            };
+                            return getPercentageValue(b) - getPercentageValue(a);
+                        });
+
+                        data.recommendations.forEach(rec => {
+                            const div = document.createElement('div');
+                            div.classList.add('career-recommendation');
+                            let percentageValue = rec.percentage || rec.match_percentage;
+                            let percentageDisplay = "";
+                            if (percentageValue) {
+                                if (typeof percentageValue === 'number') {
+                                    percentageDisplay = percentageValue + '%';
+                                } else if (typeof percentageValue === 'string') {
+                                    const numPart = parseFloat(percentageValue.replace('%', ''));
+                                    if (!isNaN(numPart)) {
+                                        percentageDisplay = numPart + '%';
+                                    }
+                                }
+                            }
+                            div.innerHTML = `
+                                <h3>${rec.name} ${percentageDisplay ? `<span class="percentage">${percentageDisplay}</span>` : ''}</h3>
+                                <div class="short-desc">${rec.short_description || ''}</div>
+                                <div class="reason">${rec.reason || ''}</div>
+                            `;
+                            div.addEventListener('click', () => handleCareerSelection(rec)); // handleCareerSelection remains largely the same
+                            targetRecommendationsList.appendChild(div);
+                        });
+                    } else {
+                        targetRecommendationsList.innerHTML = `<p>抱歉，AI暂时未能针对此阶段生成职业推荐。请检查输入或稍后再试。</p>`;
+                    }
+                }
             }
 
             async function handleCareerSelection(career) {

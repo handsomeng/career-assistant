@@ -245,6 +245,158 @@ def stream_career_details():
     return Response(stream_with_context(stream_deepseek_api(messages)),
                    mimetype='text/event-stream')
 
+# --- 新增非流式API调用辅助函数 ---
+def call_deepseek_api_once(messages):
+    """
+    调用DeepSeek API并一次性获取完整响应。
+    确保 'stream': False。
+    """
+    response = requests.post(
+        DEEPSEEK_API_URL,
+        headers={"Authorization": f"Bearer {DEEPSEEK_API_KEY}"},
+        json={
+            "model": "deepseek-chat",
+            "messages": messages,
+            "temperature": 0.7,
+            "max_tokens": 4000, # 调整Token以适应可能更长的内容
+            "stream": False # 重要：确保为非流式调用
+        }
+    )
+    if response.ok:
+        try:
+            response_data = response.json()
+            raw_response_content = response_data['choices'][0]['message']['content']
+            # 使用已有的清理函数
+            cleaned_json_str = clean_json_string(raw_response_content)
+            try:
+                return json.loads(cleaned_json_str)
+            except json.JSONDecodeError as e:
+                error_message = f"JSON解析错误: {str(e)}. AI原始返回 (已清理): {cleaned_json_str}"
+                print(error_message)
+                return {"error": "AI响应格式错误，无法解析为JSON", "details": error_message, "raw_content_preview": cleaned_json_str[:500]}
+        except (KeyError, IndexError) as e:
+            error_message = f"解析API响应结构时出错: {str(e)}. 完整响应: {response.text[:500]}"
+            print(error_message)
+            return {"error": "AI响应结构意外", "details": error_message}
+        except Exception as e: # 其他可能的请求或解析错误
+            error_message = f"处理API响应时发生未知错误: {str(e)}. 完整响应: {response.text[:500]}"
+            print(error_message)
+            return {"error": "处理AI响应时发生未知错误", "details": error_message}
+    else:
+        error_message = f"API请求失败: {response.status_code}. 响应: {response.text[:500]}"
+        print(error_message)
+        return {"error": f"AI服务API请求失败", "status_code": response.status_code, "details": error_message}
+
+# --- 新的API端点：初步分析 (非流式) ---
+@app.route('/api/analyze-preliminary', methods=['POST'])
+def analyze_preliminary():
+    mbti = request.form.get('mbti', '未提供')
+    city = request.form.get('city', '未提供')
+    holland_answers_str = request.form.get('holland_answers', '{}')
+    try:
+        holland_answers = json.loads(holland_answers_str)
+    except json.JSONDecodeError:
+        holland_answers = {}
+    
+    holland_code = {}
+    for _q, answer in holland_answers.items(): # _q is not used
+        if answer not in holland_code: holland_code[answer] = 0
+        holland_code[answer] += 1
+    holland_summary = ", ".join([f"{code}:{count}" for code, count in holland_code.items()])
+
+    # 初步分析不包含简历内容
+    resume_content_for_prompt = "用户未提供简历，请仅基于MBTI和霍兰德信息进行分析。"
+
+    system_message_preliminary = {
+        "role": "system",
+        "content": """你是专业的职业规划分析师。请基于用户的MBTI和霍兰德测试结果进行初步分析。简历未提供。
+你的任务是：
+1. 提供整体分析和洞察(insight)。理想情况下，`insight`字段应为一个JSON对象，包含以下键：
+   - "mbti_insight": 对MBTI类型的分析及其与职业特质的关系。
+   - "holland_insight": 对霍兰德模型结果的分析及其与职业兴趣的关系。
+   - "resume_insight": 对于此初步分析，请明确指出"用户未提供简历，此部分分析略过。"
+2. 推荐3-5个匹配的职业(recommendations)，每个职业信息应包含id, name, short_description, 和 reason。这些推荐应主要基于MBTI和霍兰德信息。
+
+返回结果必须是结构化的JSON，最外层包含 "insight" 和 "recommendations" 字段。
+例如: {"insight": {"mbti_insight": "...", "holland_insight": "...", "resume_insight": "用户未提供简历，此部分分析略过。"}, "recommendations": [{"id":"1", "name":"职业A", "short_description":"...", "reason":"..."}, ...]}
+如果无法生成特定部分的洞察，请在该部分说明原因，但保持整体JSON结构完整。确保所有文本内容都是UTF-8编码。不要在JSON字符串值中使用未转义的换行符，请使用 \\n。"""
+    }
+    
+    user_message_preliminary = {
+        "role": "user",
+        "content": f"""请分析以下信息并给出初步职业规划建议（不含简历分析）：
+- MBTI类型：{mbti}
+- 所在城市：{city}
+- 霍兰德测试结果：{holland_summary}
+- 简历内容：{resume_content_for_prompt}
+
+请严格按照指定的JSON结构返回结果。"""
+    }
+    
+    messages = [system_message_preliminary, user_message_preliminary]
+    analysis_result = call_deepseek_api_once(messages)
+    return jsonify(analysis_result)
+
+# --- 新的API端点：完整分析 (非流式, 包含简历) ---
+@app.route('/api/analyze-full', methods=['POST'])
+def analyze_full():
+    mbti = request.form.get('mbti', '未提供')
+    city = request.form.get('city', '未提供')
+    holland_answers_str = request.form.get('holland_answers', '{}')
+    try:
+        holland_answers = json.loads(holland_answers_str)
+    except json.JSONDecodeError:
+        holland_answers = {}
+
+    holland_code = {}
+    for _q, answer in holland_answers.items(): # _q is not used
+        if answer not in holland_code: holland_code[answer] = 0
+        holland_code[answer] += 1
+    holland_summary = ", ".join([f"{code}:{count}" for code, count in holland_code.items()])
+
+    resume_content_for_prompt = "用户未上传简历。"
+    resume_file = request.files.get('resume')
+    if resume_file and resume_file.filename:
+        try:
+            extracted_text = extract_resume_content(resume_file) # 您已有的函数
+            if len(extracted_text) > 3000: # 调整截断长度以提供更多上下文
+                resume_content_for_prompt = extracted_text[:3000] + "...(简历内容过长，已截断)"
+            else:
+                resume_content_for_prompt = extracted_text
+        except Exception as e:
+            print(f"提取简历内容时出错: {e}")
+            resume_content_for_prompt = "处理简历文件时发生错误，无法提取内容。"
+    
+    system_message_full = {
+        "role": "system",
+        "content": """你是专业的职业规划分析师。请基于用户的MBTI、霍兰德测试结果和简历内容（如果提供）进行全面分析。
+你的任务是：
+1. 提供整体分析和洞察(insight)。理想情况下，`insight`字段应为一个JSON对象，包含以下键：
+   - "mbti_insight": 对MBTI类型的分析及其与职业特质的关系。
+   - "holland_insight": 对霍兰德模型结果的分析及其与职业兴趣的关系。
+   - "resume_insight": 对简历中显示的能力、经验和技能的分析。如果用户未提供简历，或简历内容无法有效分析，请明确说明。
+2. 推荐5个最匹配的职业(recommendations)，每个职业信息应包含id, name, short_description, 和 reason。这些推荐应综合所有输入信息。
+
+返回结果必须是结构化的JSON，最外层包含 "insight" 和 "recommendations" 字段。
+例如: {"insight": {"mbti_insight": "...", "holland_insight": "...", "resume_insight": "..."}, "recommendations": [{"id":"1", "name":"职业A", "short_description":"...", "reason":"..."}, ...]}
+确保所有文本内容都是UTF-8编码。不要在JSON字符串值中使用未转义的换行符，请使用 \\n。"""
+    }
+    
+    user_message_full = {
+        "role": "user",
+        "content": f"""请分析以下信息并给出全面的职业规划建议：
+- MBTI类型：{mbti}
+- 所在城市：{city}
+- 霍兰德测试结果：{holland_summary}
+- 简历内容：{resume_content_for_prompt}
+
+请严格按照指定的JSON结构返回结果。"""
+    }
+    
+    messages = [system_message_full, user_message_full]
+    analysis_result = call_deepseek_api_once(messages)
+    return jsonify(analysis_result)
+
 # 保留原有的非流式API端点，以兼容旧版本
 @app.route('/api/analyze', methods=['POST'])
 def analyze_career():
